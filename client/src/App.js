@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import Application from './components/application'
 
 function App() {
 
@@ -13,14 +14,14 @@ function App() {
   }, [])
 
   return (
-    <div>
+    <div class="job-hunt-container">
       {
         (typeof backendData.applications === 'undefined') ? (
           <p>loading...</p>
         ) : (
-          backendData.applications.map((application, i) => (
-            <p key={i}>{application.company}</p>
-          ))
+            backendData.applications.map((application, i) => (
+              <Application application={application} />
+            ))
         )
       }
     </div>
