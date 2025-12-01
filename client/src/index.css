@@ -28,8 +28,9 @@ code {
   margin-top: 2rem;
   display: flex;
   align-items: stretch;
-  width: 30%;
+  width: 25rem;
   min-width: 20rem;
+  max-width: 25rem;
 }
 
 .application-card-section {

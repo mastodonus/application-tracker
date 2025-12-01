@@ -20,7 +20,7 @@ class Application extends React.Component{
                     </h3>
                     <span class="application-card-status">
                         <GrStatusGoodSmall
-                            size="24" 
+                            size="18"
                             color={statusColorMap[this.props.application?.status ?? 'OPEN']} />
                     </span>
                 </div>
@@ -45,17 +45,24 @@ class Application extends React.Component{
                             {this.props.application?.site}
                         </span>
                     </span>
-                    {!this.props.application?.salary_min 
-                        ? '' : 
-                        <span class="info">
-                            <span>
-                                Salary Range
-                            </span>
-                            <span>
-                                {<span>{this.props.application?.salary_min}k - {this.props.application?.salary_max}k</span>}
-                            </span>
+                    <span class="info">
+                        <span>
+                            Salary Range
                         </span>
-                    }
+                        <span>
+                            {this.props.application?.salary_min 
+                                ? <span>{this.props.application?.salary_min}k - {this.props.application?.salary_max}k</span>
+                                : <span>-</span>}
+                        </span>
+                    </span>
+                    <span class="info">
+                        <span>
+                            Applied
+                        </span>
+                        <span>
+                            {(new Date(this.props.application?.applied)).toLocaleDateString()}
+                        </span>
+                    </span>
                 </div>
                 {!this.props.application?.description ? '' :
                     <p>{this.props.application?.description}</p>
