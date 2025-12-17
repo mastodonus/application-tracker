@@ -10,26 +10,27 @@ class Application extends React.Component{
         const statusColorMap = {
             OPEN: 'blue',
             REJECTED: 'red',
+            INTERVIEWING: 'lightgreen',
         };
 
-        return <div class="application-card">
-            <div class="application-card-section ">
-                <div class="info">
+        return <div className="application-card">
+            <div className="application-card-section">
+                <div className="info">
                     <h3>
                         {this.props.application?.company ?? ''}
                     </h3>
-                    <span class="application-card-status">
+                    <span className="application-card-status">
                         <GrStatusGoodSmall
                             size="18"
                             color={statusColorMap[this.props.application?.status ?? 'OPEN']} />
                     </span>
                 </div>
-                <div class="application-card-information">
+                <div className="application-card-information">
                     {!this.props.application?.link 
                         ? <span>{this.props.application?.title}</span>
                         : <a href={this.props.application?.link } target="_blank">{this.props.application?.title}</a>
                     }
-                    <span class="info">
+                    <span className="info">
                         <span>
                             Position
                         </span>
@@ -37,7 +38,7 @@ class Application extends React.Component{
                             {this.props.application?.position}
                         </span>
                     </span>
-                    <span class="info">
+                    <span className="info">
                         <span>
                             Location
                         </span>
@@ -45,7 +46,7 @@ class Application extends React.Component{
                             {this.props.application?.site}
                         </span>
                     </span>
-                    <span class="info">
+                    <span className="info">
                         <span>
                             Salary Range
                         </span>
@@ -55,7 +56,7 @@ class Application extends React.Component{
                                 : <span>-</span>}
                         </span>
                     </span>
-                    <span class="info">
+                    <span className="info">
                         <span>
                             Applied
                         </span>

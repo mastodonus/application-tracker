@@ -14,13 +14,13 @@ function App() {
   }, [])
 
   return (
-    <div class="job-hunt-container">
+    <div className="job-hunt-container">
       {
         (typeof backendData.applications === 'undefined') ? (
           <p>loading...</p>
         ) : (
             backendData.applications.map((application, i) => (
-              <Application application={application} />
+              <Application key={application.application_id} application={application} />
             ))
         )
       }
