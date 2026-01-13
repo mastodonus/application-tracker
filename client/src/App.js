@@ -1,31 +1,49 @@
 import React, { useEffect, useState } from 'react'
-import Application from './components/application'
+import CardApplication from './components/CardApplication'
+import ModalApplicationEdit from './components/ModalApplicationEdit'
 
 function App() {
+    const [backendData, setBackendData] = useState([{}])
+    const [selectedApplication, setSelectedApplication] = useState(null);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  const [ backendData, setBackendData ] = useState([{}])
+    const fetchApplications = () => {
+        fetch("/api/applications")
+            .then(res => res.json())
+            .then(data => setBackendData(data));
+    };
   
-  useEffect(() => {
-    fetch("/api/applications")
-    .then(response => response.json())
-    .then(data => {
-      setBackendData(data);
-    })
-  }, [])
+    useEffect(() => {
+        fetchApplications();
+    }, [])
 
-  return (
-    <div className="job-hunt-container">
-      {
-        (typeof backendData.applications === 'undefined') ? (
-          <p>loading...</p>
-        ) : (
-            backendData.applications.map((application, i) => (
-              <Application key={application.application_id} application={application} />
-            ))
-        )
-      }
-    </div>
-  )
+    function editApplication(application){
+        setSelectedApplication(application);
+        setIsEditModalOpen(true);
+    }
+
+    return (
+        <div className="job-hunt-container">
+        {
+            (typeof backendData.applications === 'undefined') ? (
+                <p>loading...</p>
+            ) : (
+                backendData.applications.map((application, i) => (
+                    <CardApplication 
+                        key={application.applicationId} 
+                        application={application}
+                        onEdit={() => editApplication(application)} />
+                ))
+            )
+        }
+            <ModalApplicationEdit
+                open={isEditModalOpen}
+                onClose={() => setIsEditModalOpen(false)}
+                onSave={() => fetchApplications()}
+                application={selectedApplication}
+            />
+        </div>
+    )
 }
 
 export default App

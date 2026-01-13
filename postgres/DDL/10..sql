@@ -1,7 +1,8 @@
+create extension if not exists "pgcrypto";
 create schema if not exists job_hunt;
 
 create table if not exists job_hunt.application (
-    application_id       serial primary key,
+    application_id       uuid primary key default gen_random_uuid(),
     company              text not null default '',
     title                text not null default '',
     description          text not null default '',

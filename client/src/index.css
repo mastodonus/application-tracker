@@ -35,21 +35,39 @@ code {
 
 .application-card-section {
   width: 100%;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  padding-bottom: 0.5rem;
 }
 
 .application-card-status {
   margin-top: 1rem;
 }
 
+.application-card-header {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
 .application-card-information {
   display: flex;
   flex-direction: column;
+  padding-top: 1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-bottom: 0.5rem;
 }
 
 .info {
   display: flex;
   justify-content: space-between;
+}
+
+.application-status-open {
+  background-color: lightblue;
+}
+
+.application-status-interviewing {
+  background-color: lightgreen;
+}
+
+.application-status-rejected {
+  background-color: rgb(247, 183, 183);
 }
