@@ -14,36 +14,37 @@ code {
 }
 
 .job-hunt-container {
-  margin-top: 10rem;
-  margin-left: 15rem;
-  margin-right: 5rem;
+  margin: 10rem auto 0 auto;
+  max-width: 1200px; 
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: flex-start; /* keep rows left-aligned */
+  gap: 2rem; /* spacing between cards */
 }
 
 .application-card {
-  border: 2px solid black;
+  border: 1px solid black;
   border-radius: 5px;
   margin-top: 2rem;
-  display: flex;
-  align-items: stretch;
-  width: 25rem;
-  min-width: 20rem;
-  max-width: 25rem;
 }
+
+/* .application-card:hover .application-card-content {
+  background-color: black;
+} */
 
 .application-card-section {
   width: 100%;
 }
 
-.application-card-status {
-  margin-top: 1rem;
-}
 
 .application-card-header {
-  padding-left: 1rem;
-  padding-right: 1rem;
+  padding: 1rem;
+  align-items: center;
+}
+
+.application-card-content {
+  padding: 1rem;
+  height: 100%;
 }
 
 .application-card-information {
@@ -58,6 +59,7 @@ code {
 .info {
   display: flex;
   justify-content: space-between;
+  min-width: 20rem;
 }
 
 .application-status-open {
@@ -70,4 +72,11 @@ code {
 
 .application-status-rejected {
   background-color: rgb(247, 183, 183);
+}
+
+.add-application-card {
+  min-width: 22rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
 }

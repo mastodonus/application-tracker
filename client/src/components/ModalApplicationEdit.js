@@ -9,7 +9,7 @@ import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
 import { DateTime } from 'luxon';
 
 function ModalApplicationEdit({ open, onClose, onSave, application }) {
-    const [draft, setDraft] = useState(null);
+    const [draft, setDraft] = useState({});
 
     useEffect(() => {
         if (application) {
@@ -20,9 +20,6 @@ function ModalApplicationEdit({ open, onClose, onSave, application }) {
         }
     }, [application]);
 
-    if (!draft) {
-        return null;
-    }
 
     function updateField(field, value) {
         setDraft(prev => ({
@@ -32,13 +29,23 @@ function ModalApplicationEdit({ open, onClose, onSave, application }) {
     }
 
     async function handleSave() {
-        await fetch(`/api/applications/${draft.applicationId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(draft)
-        });
+        if(draft.applicationId){
+            await fetch(`/api/applications/${draft.applicationId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(draft)
+            });
+        }else{
+            await fetch(`/api/applications`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(draft)
+            });
+        }
 
         onSave();
         onClose();
@@ -57,7 +64,7 @@ function ModalApplicationEdit({ open, onClose, onSave, application }) {
                     borderRadius: 1,
                 }}
             >
-                <h2>{application?.company ?? ''}</h2>
+                <h2>{application?.company ?? 'Add Application'}</h2>
                 <TextField
                     label="Company"
                     fullWidth
@@ -94,16 +101,24 @@ function ModalApplicationEdit({ open, onClose, onSave, application }) {
                     label="Salary Min"
                     type="number"
                     margin="normal"
-                    value={draft.salary_min ?? ''}
-                    onChange={e => updateField('salary_min', e.target.value)}
+                    value={draft.salaryMin ?? ''}
+                    onChange={e => updateField('salaryMin', e.target.value)}
                 />
 
                 <TextField
                     label="Salary Max"
                     type="number"
                     margin="normal"
-                    value={draft.salary_max ?? ''}
-                    onChange={e => updateField('salary_max', e.target.value)}
+                    value={draft.salaryMax ?? ''}
+                    onChange={e => updateField('salaryMax', e.target.value)}
+                />
+
+                <TextField
+                    label="Link"
+                    fullWidth
+                    margin="normal"
+                    value={draft.link ?? ''}
+                    onChange={e => updateField('link', e.target.value)}
                 />
 
                 <TextField
