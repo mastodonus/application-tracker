@@ -14,8 +14,7 @@ code {
 }
 
 .job-hunt-container {
-  margin: 10rem auto 0 auto;
-  max-width: 1200px; 
+  margin: 3rem 10rem 0 22rem;
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start; /* keep rows left-aligned */
@@ -63,15 +62,18 @@ code {
 }
 
 .application-status-open {
-  background-color: lightblue;
+  background-color: #2f3e4e; /* muted blue-gray */
+  color: #e0e0e0;
 }
 
 .application-status-interviewing {
-  background-color: lightgreen;
+  background-color: #2e4a3a; /* muted green */
+  color: #e0e0e0;
 }
 
 .application-status-rejected {
-  background-color: rgb(247, 183, 183);
+  background-color: #4a2f2f; /* muted red */
+  color: #e0e0e0;
 }
 
 .add-application-card {

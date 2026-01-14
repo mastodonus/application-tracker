@@ -111,6 +111,9 @@ function ModalApplicationEdit({ open, onClose, onSave, application }) {
                     margin="normal"
                     value={draft.salaryMax ?? ''}
                     onChange={e => updateField('salaryMax', e.target.value)}
+                    sx={{
+                        marginLeft: '0.5rem',
+                    }}
                 />
 
                 <TextField
@@ -137,6 +140,9 @@ function ModalApplicationEdit({ open, onClose, onSave, application }) {
                         value={draft.applied}
                         onChange={date => updateField('applied', date)}
                         renderInput={(params) => <TextField {...params} fullWidth margin="normal" />}
+                        sx={{
+                            marginTop: '0.5rem',
+                        }}
                     />
                 </LocalizationProvider>
 
