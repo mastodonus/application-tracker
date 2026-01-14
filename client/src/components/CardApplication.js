@@ -13,7 +13,7 @@ function CardApplication ({application, onEdit, onDelete}){
 
     return (
         <Card key={application.applicationId} className="application-card">
-            <Typography variant="h5" component="div" className={`info application-card-header ${statusColorMap[application?.status ?? 'OPEN']}`}>
+            <Typography variant="h6" component="div" className={`info application-card-header ${statusColorMap[application?.status ?? 'OPEN']}`}>
                 <span>{application?.company}</span>
                 <span className="application-card-status">
                     <IconButton onClick={onEdit}>
