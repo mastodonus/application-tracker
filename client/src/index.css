@@ -14,7 +14,7 @@ code {
 }
 
 .job-hunt-container {
-  margin: 3rem 10rem 0 22rem;
+  margin: 3rem 10rem 0 10rem;
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start; /* keep rows left-aligned */

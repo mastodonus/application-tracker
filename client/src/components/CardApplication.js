@@ -2,13 +2,15 @@ import { useState } from 'react';
 import Card from '@mui/material/Card';
 import Typography  from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/EditOutlined';
+import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFileOutlined';
+import VideoCameraFrontIcon from '@mui/icons-material/VideoCameraFrontOutlined';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 
-function CardApplication ({application, onEdit, onDelete}){
+function CardApplication ({application, onEdit, onDelete, onEditDocuments, onEditInterviews}){
     const [contextMenuAnchor, setContextMenuAnchor] = useState(null);
     const contextMenuOpen = Boolean(contextMenuAnchor);
 
@@ -59,6 +61,14 @@ function CardApplication ({application, onEdit, onDelete}){
                         <MenuItem onClick={() => closeContextMenu(onDelete)}>
                             <DeleteIcon sx={{mr: '1rem'}} />
                             Delete
+                        </MenuItem>
+                        <MenuItem onClick={() => closeContextMenu(onEditDocuments)}>
+                            <InsertDriveFileIcon sx={{mr: '1rem'}} />
+                            Documents
+                        </MenuItem>
+                        <MenuItem onClick={() => closeContextMenu(onEditInterviews)}>
+                            <VideoCameraFrontIcon sx={{mr: '1rem'}} />
+                            Interviews
                         </MenuItem>
                     </Menu>
                 </span>

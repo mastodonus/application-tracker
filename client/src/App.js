@@ -14,13 +14,15 @@ import PlusIcon from '@mui/icons-material/Add';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import FilterAltOffIcon from '@mui/icons-material/FilterAltOff';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import CardApplication from './components/CardApplication'
-import ModalApplicationEdit from './components/ModalApplicationEdit'
+import CardApplication from './components/CardApplication';
+import ModalApplicationEdit from './components/ModalApplicationEdit';
+import ModalDocumentsEdit from './components/ModalDocumentsEdit';
 
 function App() {
     const [applications, setApplications] = useState([{}])
     const [selectedApplication, setSelectedApplication] = useState(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isEditDocumentsModalOpen, setIsEditDocumentsModalOpen] = useState(false);
     const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
     const [applyFilters, setApplyFilters] = useState(false);
     const [filterCompany, setFilterCompany] = useState('');
@@ -46,6 +48,11 @@ function App() {
     function addApplication(){
         setSelectedApplication(null);
         setIsEditModalOpen(true);
+    }
+
+    function editDocuments(application){
+        setSelectedApplication(application);
+        setIsEditDocumentsModalOpen(true)
     }
 
     function clearFilters(){
@@ -146,13 +153,20 @@ function App() {
                             key={application.applicationId} 
                             application={application}
                             onEdit={() => editApplication(application)}
-                            onDelete={() => deleteApplication(application)} />
+                            onDelete={() => deleteApplication(application)}
+                            onEditDocuments={() => editDocuments(application)} />
                     ))
                 )
             }
                 <ModalApplicationEdit
                     open={isEditModalOpen}
                     onClose={() => setIsEditModalOpen(false)}
+                    onSave={() => fetchApplications()}
+                    application={selectedApplication}
+                />
+                <ModalDocumentsEdit
+                    open={isEditDocumentsModalOpen}
+                    onClose={() => setIsEditDocumentsModalOpen(false)}
                     onSave={() => fetchApplications()}
                     application={selectedApplication}
                 />
