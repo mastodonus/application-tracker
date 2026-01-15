@@ -9,11 +9,9 @@ const router = express.Router();
 
 router.get('/:documentId', async (req, res) => {
   try {
-    console.log('downloading document...');
     const { documentId } = req.params;
     const document = await repository.getDocument(documentId);
 
-    console.log(document);
     if (!document) {
       return res.status(404).json({ error: 'Document not found' });
     }
