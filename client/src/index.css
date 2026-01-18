@@ -17,14 +17,15 @@ code {
   margin: 3rem 10rem 0 10rem;
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-start; /* keep rows left-aligned */
-  gap: 2rem; /* spacing between cards */
+  justify-content: space-around; /* keep rows left-aligned */
+  gap: 1rem; /* spacing between cards */
 }
 
 .application-card {
   border: 1px solid black;
   border-radius: 5px;
   margin-top: 2rem;
+  max-width: 22rem;
 }
 
 /* .application-card:hover .application-card-content {

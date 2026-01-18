@@ -18,23 +18,31 @@ function ModalDocumentsEdit({open, onClose, application}){
         if (!application){
             return;
         }
+
         fetch(`/api/documents?applicationId=${application.applicationId}`)
             .then(res => res.json())
             .then(data => setDocuments((data.documents || [])))
-            .then(setRefresh(false));
     };
     
     useEffect(() => {
         fetchDocuments();
-    }, [application, refresh]);
+    }, [application]);
+
+    useEffect(() => {
+        if(refresh){
+            fetchDocuments();
+            setRefresh(false);
+        }
+    }, [refresh]);
+
 
     async function uploadDocuments(documents){
-        await Promise.all(documents.map((document) => {
+        await Promise.all(documents.map(async (document) => {
             const formData = new FormData();
             formData.append('applicationId', application.applicationId);
             formData.append('document', document);
 
-            fetch(`/api/documents`, {
+            await fetch(`/api/documents`, {
                 method: 'POST',
                 body: formData
             });
