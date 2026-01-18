@@ -9,6 +9,7 @@ try {
     app.use(express.urlencoded({ extended: true }));
     app.use('/api/applications', require('./resources/application/application.routes'))
     app.use('/api/documents', require('./resources/document/document.routes'))
+    app.use('/api/interviews', require('./resources/interview/interview.routes'))
 
     app.listen(5333, () => {console.log('Server started on port 5333')})
 }
