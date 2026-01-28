@@ -7,7 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server",
-    "dev": "nodemon server"
+    "dev": "nodemon -r dotenv/config server dotenv_config_path=../.env.development"
   },
   "keywords": [],
   "author": "",

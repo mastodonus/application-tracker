@@ -32,9 +32,10 @@ function App() {
         console.log(process.env);
         fetch(`${API_BASE}/api/applications`)
             .then(res => res.json())
-            .then(data => setApplications((data.applications || []).filter((a) => 
+            .then(data => (data.applications || []).filter((a) => 
                 !filterCompany || a.company.toUpperCase().includes(filterCompany.toUpperCase())
-            )))
+            ))
+            .then(applications => setApplications(applications))
             .then(setApplyFilters(false));
     };
   

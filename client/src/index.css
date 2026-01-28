@@ -56,6 +56,21 @@ code {
   padding-bottom: 0.5rem;
 }
 
+.application-card-header-right {
+  display: flex;
+  align-items: center;
+}
+
+.application-card-status {
+    font-size: smaller;
+    padding:  0rem 0.5rem;
+    border: solid black 1px;
+    border-radius: 5px;
+    background-color: #573737;
+    color: #e0e0e0;
+    margin-left: 1rem;
+}
+
 .info {
   display: flex;
   justify-content: space-between;

@@ -25,6 +25,14 @@ function CardApplication({ application, onEdit, onDelete, onEditDocuments, onEdi
         setContextMenuAnchor(null);
     };
 
+    function getHeaderClass(a){
+        if (a.isStale){
+            return statusColorMap['REJECTED'];
+        }
+
+        return statusColorMap[application?.status ?? 'OPEN']
+    }
+
     const statusColorMap = {
         OPEN: 'application-status-open',
         REJECTED: 'application-status-rejected',
@@ -33,11 +41,16 @@ function CardApplication({ application, onEdit, onDelete, onEditDocuments, onEdi
 
     return (
         <Card key={application.applicationId} className="application-card">
-            <Typography variant="h6" component="div" className={`info application-card-header ${statusColorMap[application?.status ?? 'OPEN']}`}>
+            <Typography variant="h6" component="div" className={`info application-card-header ${getHeaderClass(application)}`}>
                 <span>
                     {application?.company}
                 </span>
-                <span className="application-card-status">
+                <span className="application-card-header-right">
+                    {
+                        application?.isStale
+                            ? <span className="application-card-status">Stale</span>
+                            : <span></span>
+                    }
                     <IconButton
                         id="basic-button"
                         aria-controls={contextMenuOpen ? 'basic-menu' : undefined}
