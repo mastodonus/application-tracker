@@ -1,10 +1,11 @@
-const express = require('express')
-const repository = require('./application.repository')
+import express from 'express';
+import { getApplications, updateApplication, createApplication, deleteApplication } from './application.repository.js'
+
 const router = express.Router();
 
 router.get('/', async (req, res) => {
   try {
-    const applications = await repository.getApplications();
+    const applications = await getApplications();
     res.json({applications});
   } catch (err) {
     console.error(err);
@@ -17,7 +18,7 @@ router.put('/:id', async (req, res) => {
   try{
     const { id } = req.params;
 
-    const result_id = await repository.updateApplication(id, req.body);
+    const result_id = await updateApplication(id, req.body);
 
     if (result_id?.length === 0) {
       return res.status(404).json({ error: 'Application not found' });
@@ -33,7 +34,7 @@ router.put('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
   try{
-    const result_id = await repository.createApplication(req.body);
+    const result_id = await createApplication(req.body);
 
     if (result_id?.length === 0) {
       return res.status(404).json({ error: 'Application not found' });
@@ -51,7 +52,7 @@ router.delete('/:id', async (req, res) => {
   try{
     const { id } = req.params;
 
-    const result_id = await repository.deleteApplication(id);
+    const result_id = await deleteApplication(id);
 
     if (result_id?.length === 0) {
       return res.status(404).json({ error: 'Application not found' });
@@ -64,5 +65,4 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-
-module.exports = router;
+export default router;

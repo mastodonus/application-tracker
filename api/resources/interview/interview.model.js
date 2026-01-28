@@ -1,4 +1,4 @@
-function mapInterview(row) {
+export function mapInterview(row) {
   return {
     interviewId: row.out_interview_id,
     applicationId: row.out_application_id,
@@ -6,7 +6,3 @@ function mapInterview(row) {
     details: row.out_details
   };
 }
-
-module.exports = { 
-    mapInterview,
-};

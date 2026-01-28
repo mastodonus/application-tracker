@@ -9,6 +9,7 @@ import ListItemText from '@mui/material/ListItemText';
 import PlusIcon from '@mui/icons-material/AddOutlined';
 import FileDownloadIcon from '@mui/icons-material/FileDownloadOutlined';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
+import API_BASE from '../utilities/ApiUtilities';
 
 function ModalDocumentsEdit({open, onClose, application}){
     const [documents, setDocuments] = useState([]);
@@ -19,7 +20,7 @@ function ModalDocumentsEdit({open, onClose, application}){
             return;
         }
 
-        fetch(`/api/documents?applicationId=${application.applicationId}`)
+        fetch(`${API_BASE}/api/documents?applicationId=${application.applicationId}`)
             .then(res => res.json())
             .then(data => setDocuments((data.documents || [])))
     };
@@ -42,7 +43,7 @@ function ModalDocumentsEdit({open, onClose, application}){
             formData.append('applicationId', application.applicationId);
             formData.append('document', document);
 
-            await fetch(`/api/documents`, {
+            await fetch(`${API_BASE}/api/documents`, {
                 method: 'POST',
                 body: formData
             });
@@ -52,7 +53,7 @@ function ModalDocumentsEdit({open, onClose, application}){
 
     async function downloadDocument(documentId) {
         try {
-            const response = await fetch(`/api/documents/${documentId}`, {
+            const response = await fetch(`${API_BASE}/api/documents/${documentId}`, {
                 method: 'GET',
             });
 
@@ -94,7 +95,7 @@ function ModalDocumentsEdit({open, onClose, application}){
             return;
         }
 
-        await fetch(`/api/documents/${document.documentId}`, {
+        await fetch(`${API_BASE}/api/documents/${document.documentId}`, {
             method: 'DELETE',
         });
         setRefresh(true);

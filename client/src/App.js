@@ -17,6 +17,7 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import CardApplication from './components/CardApplication';
 import ModalApplicationEdit from './components/ModalApplicationEdit';
 import ModalDocumentsEdit from './components/ModalDocumentsEdit';
+import API_BASE from './utilities/ApiUtilities';
 
 function App() {
     const [applications, setApplications] = useState([{}])
@@ -28,7 +29,8 @@ function App() {
     const [filterCompany, setFilterCompany] = useState('');
 
     const fetchApplications = () => {
-        fetch("/api/applications")
+        console.log(process.env);
+        fetch(`${API_BASE}/api/applications`)
             .then(res => res.json())
             .then(data => setApplications((data.applications || []).filter((a) => 
                 !filterCompany || a.company.toUpperCase().includes(filterCompany.toUpperCase())
@@ -69,7 +71,7 @@ function App() {
             return;
         }
 
-        await fetch(`/api/applications/${application.applicationId}`, {
+        await fetch(`${API_BASE}/api/applications/${application.applicationId}`, {
             method: 'DELETE',
         });
         fetchApplications();

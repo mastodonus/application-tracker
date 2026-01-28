@@ -1,7 +1,7 @@
-const postgres = require('../../infrastructure/postgres');
-const { mapInterview } = require('./interview.model');
+import postgres from '../../infrastructure/postgres.js';
+import { mapInterview } from './interview.model.js';
 
-async function getInterviews(interviewId, applicationId){
+export async function getInterviews(interviewId, applicationId){
     const { rows } = await postgres.query(
         'select * from job_hunt.s_interviews($1,$2)',
         [
@@ -13,7 +13,7 @@ async function getInterviews(interviewId, applicationId){
     return rows.map(mapInterview);
 }
 
-async function createInterview(interview){
+export async function createInterview(interview){
   const { rows } = await postgres.query(
       `select * from job_hunt.i_interview($1,$2,$3)`,
       [
@@ -27,7 +27,7 @@ async function createInterview(interview){
 }
 
 
-async function updateInterview(interview){
+export async function updateInterview(interview){
   const { rows } = await postgres.query(
       `select * from job_hunt.u_interview($1,$2,$3, $4)`,
       [
@@ -41,7 +41,7 @@ async function updateInterview(interview){
   return rows[0].out_interview_id;
 }
 
-async function deleteInterview(interviewId){
+export async function deleteInterview(interviewId){
   const { rows } = await postgres.query(
       `select * from job_hunt.d_interview($1)`,
       [
@@ -51,10 +51,3 @@ async function deleteInterview(interviewId){
 
   return rows[0].out_interview_id;
 }
-
-module.exports = {
-    getInterviews,
-    createInterview,
-    updateInterview,
-    deleteInterview
-};

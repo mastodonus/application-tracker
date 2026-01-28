@@ -1,4 +1,4 @@
-function mapDocumentHeader(row) {
+export function mapDocumentHeader(row) {
   return {
     documentId: row.out_document_id,
     applicationId: row.out_application_id,
@@ -9,14 +9,9 @@ function mapDocumentHeader(row) {
   };
 }
 
-function mapDocument(row) {
+export function mapDocument(row) {
   return {
     ...mapDocumentHeader(row),
     content: row.out_content,
   };
 }
-
-module.exports = { 
-    mapDocumentHeader,
-    mapDocument
-};

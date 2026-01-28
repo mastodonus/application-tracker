@@ -8,6 +8,7 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
+import API_BASE from '../utilities/ApiUtilities';
 
 function ModalApplicationEdit({ open, onClose, onSave, application }) {
     const [draft, setDraft] = useState({});
@@ -33,7 +34,7 @@ function ModalApplicationEdit({ open, onClose, onSave, application }) {
 
     async function handleSave() {
         if(draft.applicationId){
-            await fetch(`/api/applications/${draft.applicationId}`, {
+            await fetch(`${API_BASE}/api/applications/${draft.applicationId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -41,7 +42,7 @@ function ModalApplicationEdit({ open, onClose, onSave, application }) {
                 body: JSON.stringify(draft)
             });
         }else{
-            await fetch(`/api/applications`, {
+            await fetch(`${API_BASE}/api/applications`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

@@ -121,9 +121,6 @@ function CardApplication({ application, onEdit, onDelete, onEditDocuments, onEdi
                         {(new Date(application?.applied)).toLocaleDateString()}
                     </span>
                 </span>
-                {!application?.description ? '' :
-                    <p>{application?.description}</p>
-                }
             </Typography>
         </Card>
     )

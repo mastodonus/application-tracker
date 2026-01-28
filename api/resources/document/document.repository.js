@@ -1,7 +1,7 @@
-const postgres = require('../../infrastructure/postgres');
-const { mapDocumentHeader, mapDocument } = require('./document.model');
+import postgres from '../../infrastructure/postgres.js';
+import { mapDocumentHeader, mapDocument } from './document.model.js';
 
-async function getDocumentHeaders(documentId, applicationId){
+export async function getDocumentHeaders(documentId, applicationId){
     const { rows } = await postgres.query(
         'select * from job_hunt.s_document_headers($1,$2)',
         [
@@ -13,7 +13,7 @@ async function getDocumentHeaders(documentId, applicationId){
     return rows.map(mapDocumentHeader);
 }
 
-async function getDocument(documentId){
+export async function getDocument(documentId){
     const { rows } = await postgres.query(
         'select * from job_hunt.s_document($1)',
         [
@@ -24,7 +24,7 @@ async function getDocument(documentId){
     return mapDocument(rows[0]);
 }
 
-async function createDocument(document){
+export async function createDocument(document){
   const { rows } = await postgres.query(
       `select * from job_hunt.i_document($1,$2,$3,$4,$5)`,
       [
@@ -39,7 +39,7 @@ async function createDocument(document){
   return rows[0].out_document_id;
 }
 
-async function deleteDocument(documentId){
+export async function deleteDocument(documentId){
   const { rows } = await postgres.query(
       `select * from job_hunt.d_document($1)`,
       [
@@ -49,10 +49,3 @@ async function deleteDocument(documentId){
 
   return rows[0].out_document_id;
 }
-
-module.exports = {
-    getDocumentHeaders,
-    getDocument,
-    createDocument,
-    deleteDocument
-};

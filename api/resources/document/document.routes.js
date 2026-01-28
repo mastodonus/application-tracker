@@ -1,6 +1,7 @@
-const express = require('express')
-const multer = require('multer');
-const repository = require('./document.repository')
+import express from 'express';
+import multer from 'multer';
+import { getDocument, getDocumentHeaders, createDocument, deleteDocument } from './document.repository.js'
+
 
 // Memory storage keeps files in RAM
 const storage = multer.memoryStorage();
@@ -10,7 +11,7 @@ const router = express.Router();
 router.get('/:documentId', async (req, res) => {
   try {
     const { documentId } = req.params;
-    const document = await repository.getDocument(documentId);
+    const document = await getDocument(documentId);
 
     if (!document) {
       return res.status(404).json({ error: 'Document not found' });
@@ -38,7 +39,7 @@ router.get('/', async (req, res) => {
       return res.status(400).json({ error: 'applicationId is required' });
     }
 
-    const documents = await repository.getDocumentHeaders(null, applicationId);
+    const documents = await getDocumentHeaders(null, applicationId);
     res.json({documents});
   } catch (err) {
     console.error(err);
@@ -51,7 +52,7 @@ router.post('/', upload.single('document'), async (req, res) => {
     const { applicationId } = req.body;
     const file = req.file;
 
-    const documentId = await repository.createDocument({
+    const documentId = await createDocument({
       applicationId,
       filename: file.originalname,
       contentType: file.mimetype,
@@ -74,7 +75,7 @@ router.delete('/:documentId', async (req, res) => {
   try{
     const { documentId } = req.params;
 
-    const result_id = await repository.deleteDocument(documentId);
+    const result_id = await deleteDocument(documentId);
 
     if (result_id?.length === 0) {
       return res.status(404).json({ error: 'Document not found' });
@@ -87,4 +88,4 @@ router.delete('/:documentId', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

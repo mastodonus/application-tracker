@@ -1,4 +1,4 @@
-function mapApplication(row) {
+export function mapApplication(row) {
   return {
     applicationId: row.out_application_id,
     company: row.out_company,
@@ -13,5 +13,3 @@ function mapApplication(row) {
     link: row.out_link
   };
 }
-
-module.exports = { mapApplication };

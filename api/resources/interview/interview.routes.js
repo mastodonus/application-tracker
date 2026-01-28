@@ -1,10 +1,11 @@
-const express = require('express')
-const repository = require('./interview.repository')
+import express from 'express';
+import { getInterviews, updateInterview, createInterview, deleteInterview } from './interview.repository.js'
+
 const router = express.Router();
 
 router.get('/', async (req, res) => {
   try {
-    const interviews = await repository.getInterviews();
+    const interviews = await getInterviews();
     res.json({interviews});
   } catch (err) {
     console.error(err);
@@ -17,7 +18,7 @@ router.put('/:id', async (req, res) => {
   try{
     const { id } = req.params;
 
-    const result_id = await repository.updateInterview(id, req.body);
+    const result_id = await updateInterview(id, req.body);
 
     if (result_id?.length === 0) {
       return res.status(404).json({ error: 'Interview not found' });
@@ -33,7 +34,7 @@ router.put('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
   try{
-    const result_id = await repository.createInterview(req.body);
+    const result_id = await createInterview(req.body);
 
     if (result_id?.length === 0) {
       return res.status(404).json({ error: 'Interview not found' });
@@ -51,7 +52,7 @@ router.delete('/:id', async (req, res) => {
   try{
     const { id } = req.params;
 
-    const result_id = await repository.deleteInterview(id);
+    const result_id = await deleteInterview(id);
 
     if (result_id?.length === 0) {
       return res.status(404).json({ error: 'Interview not found' });
@@ -64,5 +65,4 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-
-module.exports = router;
+export default router;

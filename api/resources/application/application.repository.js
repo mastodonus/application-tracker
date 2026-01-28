@@ -1,7 +1,7 @@
-const postgres = require('../../infrastructure/postgres');
-const { mapApplication } = require('./application.model');
+import postgres from '../../infrastructure/postgres.js';
+import { mapApplication } from './application.model.js'
 
-async function getApplications(applicationId = null) {
+export async function getApplications(applicationId = null) {
   const { rows } = await postgres.query(
     'select * from job_hunt.s_applications($1)',
     [applicationId]
@@ -10,7 +10,7 @@ async function getApplications(applicationId = null) {
   return rows.map(mapApplication);
 }
 
-async function updateApplication(applicationId, application){
+export async function updateApplication(applicationId, application){
   const { rows } = await postgres.query(
       `select * from job_hunt.u_application($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`,
       [
@@ -31,7 +31,7 @@ async function updateApplication(applicationId, application){
   return rows[0].out_application_id;
 }
 
-async function createApplication(application){
+export async function createApplication(application){
   const { rows } = await postgres.query(
       `select * from job_hunt.i_application($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`,
       [
@@ -51,7 +51,7 @@ async function createApplication(application){
   return rows[0].out_application_id;
 }
 
-async function deleteApplication(applicationId){
+export async function deleteApplication(applicationId){
   const { rows } = await postgres.query(
       `select * from job_hunt.d_application($1)`,
       [
@@ -61,10 +61,3 @@ async function deleteApplication(applicationId){
 
   return rows[0].out_application_id;
 }
-
-module.exports = {
-    getApplications,
-    updateApplication,
-    createApplication,
-    deleteApplication
-};
