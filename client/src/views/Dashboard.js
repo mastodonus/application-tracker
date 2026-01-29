@@ -14,12 +14,12 @@ import PlusIcon from '@mui/icons-material/Add';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import FilterAltOffIcon from '@mui/icons-material/FilterAltOff';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import CardApplication from './components/CardApplication';
-import ModalApplicationEdit from './components/ModalApplicationEdit';
-import ModalDocumentsEdit from './components/ModalDocumentsEdit';
-import API_BASE from './utilities/ApiUtilities';
+import CardApplication from '../components/CardApplication';
+import ModalApplicationEdit from '../components/ModalApplicationEdit';
+import ModalDocumentsEdit from '../components/ModalDocumentsEdit';
+import API_BASE from '../utilities/ApiUtilities';
 
-function App() {
+function Dashboard() {
     const [applications, setApplications] = useState([{}])
     const [selectedApplication, setSelectedApplication] = useState(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -178,4 +178,4 @@ function App() {
     )
 }
 
-export default App
+export default Dashboard

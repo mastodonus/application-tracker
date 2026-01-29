@@ -1,25 +1,30 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import CssBaseline from '@mui/material/CssBaseline';
-
 import './index.css';
-import App from './App';
 import theme from './theme';
 import reportWebVitals from './reportWebVitals';
+import Dashboard from './views/Dashboard';
+import Login from './views/Login';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
-  <React.StrictMode>
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <App />
-    </ThemeProvider>
-  </React.StrictMode>
+    <React.StrictMode>
+        <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                    <Route path="*" element={<Navigate to="/dashboard" replace />} />
+                </Routes>
+            </BrowserRouter>
+        </ThemeProvider>
+    </React.StrictMode>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
