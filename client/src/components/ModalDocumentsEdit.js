@@ -20,9 +20,11 @@ function ModalDocumentsEdit({open, onClose, application}){
             return;
         }
 
-        fetch(`${API_BASE}/api/documents?applicationId=${application.applicationId}`)
+        fetch(`${API_BASE}/api/documents?applicationId=${application.applicationId}`, {
+                credentials: 'include'
+            })
             .then(res => res.json())
-            .then(data => setDocuments((data.documents || [])))
+            .then(data => setDocuments((data || [])))
     };
     
     useEffect(() => {
@@ -45,7 +47,8 @@ function ModalDocumentsEdit({open, onClose, application}){
 
             await fetch(`${API_BASE}/api/documents`, {
                 method: 'POST',
-                body: formData
+                body: formData,
+                credentials: 'include'
             });
         }));
         setRefresh(true);
@@ -55,6 +58,7 @@ function ModalDocumentsEdit({open, onClose, application}){
         try {
             const response = await fetch(`${API_BASE}/api/documents/${documentId}`, {
                 method: 'GET',
+                credentials: 'include'
             });
 
             if (!response.ok) {
@@ -97,6 +101,7 @@ function ModalDocumentsEdit({open, onClose, application}){
 
         await fetch(`${API_BASE}/api/documents/${document.documentId}`, {
             method: 'DELETE',
+            credentials: 'include'
         });
         setRefresh(true);
     }

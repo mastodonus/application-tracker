@@ -1,3 +1,9 @@
+:root{
+  --var-muted-blue: #2f3e4e;
+  --var-muted-green: #2e4a3a;
+  --var-muted-red: #4a2f2f;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -11,6 +17,13 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.logo span:first-of-type{
+  color: var(--var-muted-green);
+}
+.logo span:last-of-type{
+  color: var(--var-muted-blue);
 }
 
 .job-hunt-container {
@@ -35,7 +48,6 @@ code {
 .application-card-section {
   width: 100%;
 }
-
 
 .application-card-header {
   padding: 0.5rem 1rem;
@@ -88,7 +100,7 @@ code {
 }
 
 .application-status-rejected {
-  background-color: #4a2f2f; /* muted red */
+  background-color: var(--var-muted-red); /* muted red */
   color: #e0e0e0;
 }
 

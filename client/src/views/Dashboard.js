@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Drawer from '@mui/material/Drawer';
@@ -8,16 +8,19 @@ import TextField from '@mui/material/TextField';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import ListItem  from '@mui/material/ListItem';
-import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
+import Avatar from '@mui/material/Avatar';
 import PlusIcon from '@mui/icons-material/Add';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import FilterAltOffIcon from '@mui/icons-material/FilterAltOff';
-import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import LogoutIcon from '@mui/icons-material/Logout';
 import CardApplication from '../components/CardApplication';
 import ModalApplicationEdit from '../components/ModalApplicationEdit';
 import ModalDocumentsEdit from '../components/ModalDocumentsEdit';
+import Logo from "../components/Logo";
 import API_BASE from '../utilities/ApiUtilities';
+import { useAuth } from "../utilities/AuthProvider";
+import { useNavigate } from "react-router-dom";
 
 function Dashboard() {
     const [applications, setApplications] = useState([{}])
@@ -27,12 +30,15 @@ function Dashboard() {
     const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
     const [applyFilters, setApplyFilters] = useState(false);
     const [filterCompany, setFilterCompany] = useState('');
+    const { user, logout } = useAuth();
+    const navigate = useNavigate();
 
     const fetchApplications = () => {
-        console.log(process.env);
-        fetch(`${API_BASE}/api/applications`)
+        fetch(`${API_BASE}/api/applications`, {
+                credentials: 'include'
+            })
             .then(res => res.json())
-            .then(data => (data.applications || []).filter((a) => 
+            .then(data => (data || []).filter((a) => 
                 !filterCompany || a.company.toUpperCase().includes(filterCompany.toUpperCase())
             ))
             .then(applications => setApplications(applications))
@@ -63,6 +69,11 @@ function Dashboard() {
         setApplyFilters(true);
     }
 
+    function handleLogout() {
+        logout();
+        navigate("/login", { replace: true });
+    }
+
     async function deleteApplication(application){
         const confirmed = window.confirm(
             `Are you sure you want to delete ${application.company ?? 'this application'}?`
@@ -74,6 +85,7 @@ function Dashboard() {
 
         await fetch(`${API_BASE}/api/applications/${application.applicationId}`, {
             method: 'DELETE',
+            credentials: 'include'
         });
         fetchApplications();
     }
@@ -82,9 +94,10 @@ function Dashboard() {
         <>
             <AppBar position="static">
                 <Toolbar>
-                    <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                    {/* <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         Job Hunt
-                    </Typography>
+                    </Typography> */}
+                    <Logo sx={{fontSize: '2rem', flexGrow: 1, filter: 'brightness(2)'}}/>
                     <IconButton
                         size="large"
                         edge="start"
@@ -114,15 +127,18 @@ function Dashboard() {
                         onClick={() => clearFilters()}
                     >
                         <FilterAltOffIcon />
-                    </IconButton>                    
+                    </IconButton>
                     <IconButton
                         size="large"
                         edge="start"
                         color="inherit"
                         aria-label="menu"
+                        sx={{ mr: 2 }}
+                        onClick={() => handleLogout()}
                     >
-                        <FileDownloadIcon />
+                        <LogoutIcon />
                     </IconButton>
+                    <Avatar src={user?.avatar} slotProps={{ referrerPolicy: 'no-referrer' }}/>
                 </Toolbar>
             </AppBar>
             <Drawer open={isFilterDrawerOpen} onClose={() => setIsFilterDrawerOpen(false)}>
@@ -150,6 +166,10 @@ function Dashboard() {
             {
                 (typeof applications === 'undefined') ? (
                     <p>loading...</p>
+                ) : (!applications.length && !filterCompany) ? (
+                    <Box sx={{textAlign: 'center'}}>To start tracking applications, press the + icon.</Box>
+                ) : (!applications.length) ? (
+                    <Box sx={{textAlign: 'center'}}>No applications found.</Box>
                 ) : (
                     applications.map((application, i) => (
                         <CardApplication 

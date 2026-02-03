@@ -1,68 +1,67 @@
 import express from 'express';
 import { getInterviews, updateInterview, createInterview, deleteInterview } from './interview.repository.js'
+import { requireAuth } from '../../middleware/requireAuth.js';
 
 const router = express.Router();
 
-router.get('/', async (req, res) => {
-  try {
-    const interviews = await getInterviews();
-    res.json({interviews});
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Database error' });
-  }
+// GET MANY
+router.get('/', requireAuth, async (req, res) => {
+    try {
+        const { applicationId } = req.query;
+        const getInterviewsResult = await getInterviews(req.user.userId, applicationId);
+        
+        return getInterviewsResult.success
+            ? res.json(getInterviewsResult.data)
+            : res.sendStatus(getInterviewsResult.status);
+    } catch (err) {
+        console.error(err);
+        res.sendStatus(500);
+    }
 });
 
+// UPDATE ONE
+router.put('/:id', requireAuth, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updateInterviewResult = await updateInterview(req.user.userId, id, req.body);
 
-router.put('/:id', async (req, res) => {
-  try{
-    const { id } = req.params;
-
-    const result_id = await updateInterview(id, req.body);
-
-    if (result_id?.length === 0) {
-      return res.status(404).json({ error: 'Interview not found' });
+        return updateInterviewResult.success
+            ? res.json(updateInterviewResult.data)
+            : res.sendStatus(updateInterviewResult.status);
+    } catch (err) {
+        console.error(err);
+        res.sendStatus(500);
     }
-
-    res.json({interviewId: result_id});
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Database error' });
-  }
 });
 
+// CREATE ONE
+router.post('/', requireAuth, async (req, res) => {
+    try {
+        const createInterviewResult = await createInterview(req.user.userId, req.body);
 
-router.post('/', async (req, res) => {
-  try{
-    const result_id = await createInterview(req.body);
-
-    if (result_id?.length === 0) {
-      return res.status(404).json({ error: 'Interview not found' });
+        return createInterviewResult.success
+            ? res.json(createInterviewResult.data)
+            : res.sendStatus(createInterviewResult.status);
+    } catch (err) {
+        console.error(err);
+        res.sendStatus(500);
     }
-
-    res.json({interviewId: result_id});
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Database error' });
-  }
 });
 
+// DELETE ONE
+router.delete('/:id', requireAuth, async (req, res) => {
+    try {
+        const { id } = req.params;
 
-router.delete('/:id', async (req, res) => {
-  try{
-    const { id } = req.params;
+        const deleteInterviewResult = await deleteInterview(req.user.userId, id);
 
-    const result_id = await deleteInterview(id);
-
-    if (result_id?.length === 0) {
-      return res.status(404).json({ error: 'Interview not found' });
+        return deleteInterviewResult.success
+            ? res.json(deleteInterviewResult.data)
+            : res.sendStatus(deleteInterviewResult.status);
+    } catch (err) {
+        console.error(err);
+        res.sendStatus(500);
     }
-
-    res.json({interviewId: result_id});
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Database error' });
-  }
 });
 
 export default router;

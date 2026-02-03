@@ -1,16 +1,14 @@
 import cors from 'cors';
-
-const clientDomain = process.env.CLIENT_DOMAIN;
-const clientPort = process.env.CLIENT_PORT;
+import { variables } from './variables.js';
 
 const allowedOrigins = [
-    `http://${clientDomain}:${clientPort}`,
-    `https://${clientDomain}:${clientPort}`,
+    `http://${variables.client.domain}:${variables.client.port}`,
+    `https://${variables.client.domain}:${variables.client.port}`,
 ];
 
-if (clientPort === '80') {
-    allowedOrigins.push(`http://${clientDomain}`);
-    allowedOrigins.push(`https://${clientDomain}`);
+if (variables.client.port === '80') {
+    allowedOrigins.push(`http://${variables.client.domain}`);
+    allowedOrigins.push(`https://${variables.client.domain}`);
 }
 
 const corsSettings = cors({
@@ -28,6 +26,7 @@ const corsSettings = cors({
             new Error(`CORS blocked origin: ${origin}`)
         );
     },
+    credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 });

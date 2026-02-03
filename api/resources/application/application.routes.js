@@ -1,68 +1,66 @@
 import express from 'express';
 import { getApplications, updateApplication, createApplication, deleteApplication } from './application.repository.js'
+import { requireAuth } from '../../middleware/requireAuth.js';
 
 const router = express.Router();
 
-router.get('/', async (req, res) => {
-  try {
-    const applications = await getApplications();
-    res.json({applications});
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Database error' });
-  }
+// GET MANY
+router.get('/', requireAuth, async (req, res) => {
+    try {
+        const getApplicationResult = await getApplications(req.user.userId);
+
+        return getApplicationResult.success
+            ? res.json(getApplicationResult.data)
+            : res.sendStatus(getApplicationResult.status);
+    } catch (err) {
+        console.error(err);
+        res.sendStatus(500);
+    }
 });
 
+// UPDATE ONE
+router.put('/:id', requireAuth, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updateApplicationResult = await updateApplication(req.user.userId, id, req.body);
 
-router.put('/:id', async (req, res) => {
-  try{
-    const { id } = req.params;
-
-    const result_id = await updateApplication(id, req.body);
-
-    if (result_id?.length === 0) {
-      return res.status(404).json({ error: 'Application not found' });
+        return updateApplicationResult.success
+            ? res.json(updateApplicationResult.data)
+            : res.sendStatus(updateApplicationResult.status);
+    } catch (err) {
+        console.error(err);
+        res.sendStatus(500);
     }
-
-    res.json({applicationId: result_id});
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Database error' });
-  }
 });
 
+// CREATE ONE
+router.post('/', requireAuth, async (req, res) => {
+    try {
+        const createApplicationResult = await createApplication(req.user.userId, req.body);
 
-router.post('/', async (req, res) => {
-  try{
-    const result_id = await createApplication(req.body);
-
-    if (result_id?.length === 0) {
-      return res.status(404).json({ error: 'Application not found' });
+        return createApplicationResult.success
+            ? res.json(createApplicationResult.data)
+            : res.sendStatus(createApplicationResult.status);
+    } catch (err) {
+        console.error(err);
+        res.sendStatus(500);
     }
-
-    res.json({applicationId: result_id});
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Database error' });
-  }
 });
 
+// DELETE ONE
+router.delete('/:id', requireAuth, async (req, res) => {
+    try {
+        const { id } = req.params;
 
-router.delete('/:id', async (req, res) => {
-  try{
-    const { id } = req.params;
+        const deleteApplicationResult = await deleteApplication(req.user.userId, id);
 
-    const result_id = await deleteApplication(id);
-
-    if (result_id?.length === 0) {
-      return res.status(404).json({ error: 'Application not found' });
+        return deleteApplicationResult.success
+            ? res.json(deleteApplicationResult.data)
+            : res.sendStatus(deleteApplicationResult.status);
+    } catch (err) {
+        console.error(err);
+        res.sendStatus(500);
     }
-
-    res.json({applicationId: result_id});
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Database error' });
-  }
 });
 
 export default router;

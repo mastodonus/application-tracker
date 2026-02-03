@@ -12,6 +12,7 @@ export function mapApplication(row) {
         salaryMax: row.out_salary_max,
         status: row.out_status,
         link: row.out_link,
+        userId: row.out_user_id,
         isStale: false,
     };
 

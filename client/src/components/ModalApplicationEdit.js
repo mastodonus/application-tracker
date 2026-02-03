@@ -39,7 +39,8 @@ function ModalApplicationEdit({ open, onClose, onSave, application }) {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(draft)
+                body: JSON.stringify(draft),
+                credentials: 'include'
             });
         }else{
             await fetch(`${API_BASE}/api/applications`, {
@@ -47,7 +48,8 @@ function ModalApplicationEdit({ open, onClose, onSave, application }) {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(draft)
+                body: JSON.stringify(draft),
+                credentials: 'include'
             });
         }
 
