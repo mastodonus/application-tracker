@@ -1,5 +1,4 @@
-# Job Hunt
-#### [Work In-Progress]
+# Application Tracker
 A small react + node express application for tracking job applications.
 
 - Track applications including location, salary, status, date applied
