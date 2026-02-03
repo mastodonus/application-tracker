@@ -138,7 +138,7 @@ function Dashboard() {
                     >
                         <LogoutIcon />
                     </IconButton>
-                    <Avatar src={user?.avatar} slotProps={{ referrerPolicy: 'no-referrer' }}/>
+                    <Avatar src={user?.avatar} imgProps={{ referrerPolicy: 'no-referrer' }}/>
                 </Toolbar>
             </AppBar>
             <Drawer open={isFilterDrawerOpen} onClose={() => setIsFilterDrawerOpen(false)}>
