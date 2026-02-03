@@ -22,7 +22,7 @@ function ModalApplicationEdit({ open, onClose, onSave, application }) {
         }else{
             setDraft({});
         }
-    }, [application]);
+    }, [open]);
 
 
     function updateField(field, value) {
