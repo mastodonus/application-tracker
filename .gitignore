@@ -11,6 +11,12 @@
 # production
 /build
 
+# terraform
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
+*.tfvars
+
 # misc
 .vscode
 .DS_Store
