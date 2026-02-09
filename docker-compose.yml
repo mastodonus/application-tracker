@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DATABASE}
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - /var/lib/postgresql/data:/var/lib/postgresql/data
 
   flyway:
     image: flyway/flyway:latest
@@ -40,6 +40,3 @@ services:
       - client/.env
     depends_on:
       - api
-
-volumes:
-  db-data:
