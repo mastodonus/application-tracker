@@ -23,16 +23,16 @@ services:
       - ./postgres/migrations:/flyway/sql
   
   api:
-    build: ./api
+    image: ghcr.io/mastodonus/application-tracker-api:latest
     ports:
       - "${API_PORT}:5333"
     env_file:
       - .env
     depends_on:
-      - flyway
-  
+      - db
+
   client:
-    build: ./client
+    image: ghcr.io/mastodonus/application-tracker-client:latest
     ports:
       - "${CLIENT_PORT}:80"
     env_file:
