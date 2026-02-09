@@ -52,18 +52,29 @@ resource "aws_security_group" "ec2" {
   name   = "application-tracker-ec2-sg"
   vpc_id = aws_vpc.main.id
 
+  # Allow SSH
   ingress {
     description = "SSH"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = [var.ssh_allowed_cidr]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
+  # Allow API
   ingress {
-    description = "App"
-    from_port   = 3000
-    to_port     = 3000
+    description = "API"
+    from_port   = 5000
+    to_port     = 5000
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Allow frontend
+  ingress {
+    description = "Client"
+    from_port   = 80
+    to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
