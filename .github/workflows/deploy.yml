@@ -26,26 +26,26 @@ jobs:
             APP_DIR=/home/ec2-user/application-tracker
 
             if [ ! -d "$APP_DIR" ]; then
-              git clone https://github.com/<your-org>/<your-repo>.git $APP_DIR
+              git clone https://github.com/mastodonus/application-tracker.git $APP_DIR
             fi
 
             cd $APP_DIR
 
             cat > .env << ENVEOF
-          POSTGRES_HOST=db
-          POSTGRES_PORT=5432
+          POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}
+          POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}
           POSTGRES_DATABASE=${{ secrets.POSTGRES_DATABASE }}
           POSTGRES_USER=${{ secrets.POSTGRES_USER }}
           POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
 
           API_DOMAIN=${{ secrets.EC2_PUBLIC_IP }}
-          API_PORT=5000
+          API_PORT=${{ secrets.API_PORT }}
           API_JWT_SECRET=${{ secrets.API_JWT_SECRET }}
-          API_COOKIE_MAX_AGE=7
+          API_COOKIE_MAX_AGE=${{ secrets.API_COOKIE_MAX_AGE }}
           GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
 
           CLIENT_DOMAIN=${{ secrets.EC2_PUBLIC_IP }}
-          CLIENT_PORT=80
+          CLIENT_PORT=${{ secrets.CLIENT_PORT }}
           ENVEOF
 
           chmod 600 .env
