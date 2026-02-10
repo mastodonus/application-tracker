@@ -72,6 +72,9 @@ jobs:
             mkdir -p $APP_DIR
             cd $APP_DIR
 
+            docker-compose down --volumes --remove-orphans
+            docker image prune -af
+
             cat > .env << EOF
             POSTGRES_HOST=db
             POSTGRES_PORT=$POSTGRES_PORT
@@ -92,5 +95,5 @@ jobs:
             chmod 600 .env
             chown ec2-user:ec2-user .env
 
-            docker-compose pull
-            docker-compose up -d --force-recreate
+            docker-compose --env-file .env pull
+            docker-compose --env-file .env up -d --force-recreate

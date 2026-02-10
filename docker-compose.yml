@@ -37,5 +37,6 @@ services:
       - "${CLIENT_PORT}:80"
     env_file:
       - .env
+      # used to be a - client/.env here
     depends_on:
       - api
