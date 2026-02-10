@@ -1,6 +1,12 @@
 #!/bin/bash
 set -e
 
+# find the root partition and expand it
+ROOT_DEV=$(findmnt -n -o SOURCE /)
+echo "Root device is $ROOT_DEV"
+sudo growpart $ROOT_DEV 1
+sudo xfs_growfs /
+
 # Ensure docker-compose is in PATH
 export PATH=$PATH:/usr/local/bin
 
