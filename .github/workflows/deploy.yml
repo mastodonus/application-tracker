@@ -53,6 +53,18 @@ jobs:
           host: ${{ secrets.EC2_PUBLIC_IP }}
           username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
+          envs: |
+            POSTGRES_HOST
+            POSTGRES_PORT
+            POSTGRES_DATABASE
+            POSTGRES_USER
+            POSTGRES_PASSWORD
+            API_PORT
+            API_JWT_SECRET
+            API_COOKIE_MAX_AGE
+            GOOGLE_CLIENT_ID
+            CLIENT_PORT
+            EC2_PUBLIC_IP
           script: |
             set -e
 
@@ -60,27 +72,25 @@ jobs:
             mkdir -p $APP_DIR
             cd $APP_DIR
 
-            # Create .env file from secrets
-            cat > .env << 'EOF'
+            cat > .env << EOF
             POSTGRES_HOST=db
-            POSTGRES_PORT=${POSTGRES_PORT}
-            POSTGRES_DATABASE=${POSTGRES_DATABASE}
-            POSTGRES_USER=${POSTGRES_USER}
-            POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+            POSTGRES_PORT=$POSTGRES_PORT
+            POSTGRES_DATABASE=$POSTGRES_DATABASE
+            POSTGRES_USER=$POSTGRES_USER
+            POSTGRES_PASSWORD=$POSTGRES_PASSWORD
 
-            API_DOMAIN=${EC2_PUBLIC_IP}
-            API_PORT=${API_PORT}
-            API_JWT_SECRET=${API_JWT_SECRET}
-            API_COOKIE_MAX_AGE=${API_COOKIE_MAX_AGE}
-            GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+            API_DOMAIN=$EC2_PUBLIC_IP
+            API_PORT=$API_PORT
+            API_JWT_SECRET=$API_JWT_SECRET
+            API_COOKIE_MAX_AGE=$API_COOKIE_MAX_AGE
+            GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID
 
-            CLIENT_DOMAIN=${EC2_PUBLIC_IP}
-            CLIENT_PORT=${CLIENT_PORT}
+            CLIENT_DOMAIN=$EC2_PUBLIC_IP
+            CLIENT_PORT=$CLIENT_PORT
             EOF
 
             chmod 600 .env
             chown ec2-user:ec2-user .env
 
-            # Pull updated images and start containers
             docker-compose pull
-            docker-compose up -d --build --force-recreate
+            docker-compose up -d --force-recreate
