@@ -69,6 +69,7 @@ jobs:
             set -e
 
             APP_DIR=/home/ec2-user/application-tracker
+            rm -rf $APP_DIR
             mkdir -p $APP_DIR
             cd $APP_DIR
 
