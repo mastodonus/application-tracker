@@ -84,7 +84,7 @@ jobs:
             cd /home/ec2-user/application-tracker
 
             # Login to GHCR
-            echo ${{ GHCR_PAT }} | docker login ghcr.io -u mastodonus --password-stdin
+            echo ${{ secrets.GHCR_PAT }} | docker login ghcr.io -u mastodonus --password-stdin
 
             # Shut down any running containers and prune
             docker-compose down --volumes --remove-orphans
