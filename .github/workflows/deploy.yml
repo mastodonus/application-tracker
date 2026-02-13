@@ -120,6 +120,7 @@ jobs:
             EOF
 
             sudo nginx -t
+            sudo systemctl start nginx || true
             sudo systemctl reload nginx
 
             # Obtain SSL certificates automatically
