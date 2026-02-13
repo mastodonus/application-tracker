@@ -63,10 +63,6 @@ jobs:
           script: |
             set -e
 
-            # Shut down any running containers and prune
-            docker-compose down --volumes --remove-orphans
-            docker image prune -af
-
             # clean application folder
             APP_DIR=/home/ec2-user/application-tracker
             rm -rf $APP_DIR
@@ -109,7 +105,12 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             set -e
-
             cd /home/ec2-user/application-tracker
-            docker-compose --env-file .env pull
-            docker-compose --env-file .env up -d --force-recreate
+
+            # Shut down any running containers and prune
+            docker-compose down --volumes --remove-orphans
+            docker image prune -af
+
+            # Pull latest and run
+            docker-compose pull --env-file .env
+            docker-compose up   --env-file .env -d --force-recreate
