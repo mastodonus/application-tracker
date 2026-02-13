@@ -42,7 +42,7 @@ jobs:
             # clean application folder
             APP_DIR=/home/ec2-user/application-tracker
             sudo rm -rf $APP_DIR
-            sudo mkdir -p $APP_DIR
+            mkdir -p $APP_DIR
             cd $APP_DIR
 
             # Create .env variables
