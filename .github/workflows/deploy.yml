@@ -63,6 +63,11 @@ jobs:
           script: |
             set -e
 
+            # Test
+            echo 1 ${{ secrets.POSTGRES_PORT }}
+            echo 2 ${POSTGRES_PORT}
+            echo 3 $POSTGRES_PORT
+
             # clean application folder
             APP_DIR=/home/ec2-user/application-tracker
             rm -rf $APP_DIR
