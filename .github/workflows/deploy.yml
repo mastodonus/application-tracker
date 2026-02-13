@@ -10,11 +10,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout code
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      # 2. Log in to GHCR
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v2
         with:
@@ -22,20 +20,17 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_PAT }}
 
-      # 3. Build & push API image
       - name: Build & push API
         run: |
           docker build -t ghcr.io/mastodonus/application-tracker-api:latest ./api
           docker push ghcr.io/mastodonus/application-tracker-api:latest
 
-      # 4. Build & push Client image
       - name: Build & push Client
         run: |
           docker build -t ghcr.io/mastodonus/application-tracker-client:latest ./client
           docker push ghcr.io/mastodonus/application-tracker-client:latest
 
-      # 5. SSH to EC2 and deploy
-      - name: Deploy to EC2
+      - name: Initialize Environment (SSH)
         uses: appleboy/ssh-action@v0.1.7
         env:
           POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
@@ -68,27 +63,28 @@ jobs:
           script: |
             set -e
 
+            # Shut down any running containers and prune
+            docker-compose down --volumes --remove-orphans
+            docker image prune -af
+
+            # clean application folder
             APP_DIR=/home/ec2-user/application-tracker
             rm -rf $APP_DIR
             mkdir -p $APP_DIR
             cd $APP_DIR
 
-            docker-compose down --volumes --remove-orphans
-            docker image prune -af
-
+            # Create .env variables
             cat > .env << EOF
             POSTGRES_HOST=db
             POSTGRES_PORT=$POSTGRES_PORT
             POSTGRES_DATABASE=$POSTGRES_DATABASE
             POSTGRES_USER=$POSTGRES_USER
             POSTGRES_PASSWORD=$POSTGRES_PASSWORD
-
             API_DOMAIN=$EC2_PUBLIC_IP
             API_PORT=$API_PORT
             API_JWT_SECRET=$API_JWT_SECRET
             API_COOKIE_MAX_AGE=$API_COOKIE_MAX_AGE
             GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID
-
             CLIENT_DOMAIN=$EC2_PUBLIC_IP
             CLIENT_PORT=$CLIENT_PORT
             EOF
@@ -96,5 +92,25 @@ jobs:
             chmod 600 .env
             chown ec2-user:ec2-user .env
 
+      - name: Copy docker-compose.yml
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.EC2_PUBLIC_IP }}
+          username: ec2-user
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "docker-compose.yml"
+          target: "/home/ec2-user/application-tracker"
+
+      - name: Start Application
+        uses: appleboy/ssh-action@v0.1.7
+        env:
+        with:
+          host: ${{ secrets.EC2_PUBLIC_IP }}
+          username: ec2-user
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            set -e
+
+            cd /home/ec2-user/application-tracker
             docker-compose --env-file .env pull
             docker-compose --env-file .env up -d --force-recreate
