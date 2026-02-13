@@ -30,8 +30,6 @@ services:
     restart: unless-stopped
     env_file:
       - .env
-    ports:
-      - "${API_PORT}:5333"
     depends_on:
       - db
     expose:
@@ -45,8 +43,6 @@ services:
     restart: unless-stopped
     env_file:
       - .env
-    ports:
-      - "${CLIENT_PORT}:80"
     depends_on:
       - api
     expose:
