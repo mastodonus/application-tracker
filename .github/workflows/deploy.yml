@@ -111,6 +111,6 @@ jobs:
             docker-compose down --volumes --remove-orphans
             docker image prune -af
 
-            # Pull latest and run
-            docker-compose pull --env-file .env
-            docker-compose up   --env-file .env -d --force-recreate
+            # Pull latest and
+            docker-compose pull
+            docker-compose up --env-file .env -d --force-recreate
