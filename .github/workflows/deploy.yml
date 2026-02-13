@@ -124,7 +124,7 @@ jobs:
             sudo systemctl reload nginx
 
             # Obtain SSL certificates automatically
-            sudo certbot --nginx -d ${{ secrets.DOMAIN }} -d api.${{ secrets.DOMAIN }} --non-interactive --agree-tos --redirect --deploy-hook "systemctl reload nginx"
+            sudo certbot --nginx -d ${{ secrets.DOMAIN }} -d api.${{ secrets.DOMAIN }} --non-interactive --agree-tos --email adam.js.osmond@gmail.com --redirect --deploy-hook "systemctl reload nginx"
 
             $ Pull latest containers and start
             docker-compose pull
