@@ -120,4 +120,4 @@ jobs:
 
             # Pull latest and
             docker-compose pull
-            docker-compose up --env-file .env -d --force-recreate
+            docker-compose up -d --force-recreate
