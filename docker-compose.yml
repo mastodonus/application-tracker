@@ -31,7 +31,7 @@ services:
     env_file:
       - .env
     ports:
-      - "${API_PORT}:80"
+      - "${API_PORT}:5333"
     depends_on:
       - db
     expose:
@@ -46,7 +46,7 @@ services:
     env_file:
       - .env
     ports:
-      - "${CLIENT_PORT}:5333"
+      - "${CLIENT_PORT}:80"
     depends_on:
       - api
     expose:
