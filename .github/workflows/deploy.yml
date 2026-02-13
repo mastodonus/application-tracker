@@ -33,7 +33,7 @@ jobs:
       - name: Initialize Environment (SSH)
         uses: appleboy/ssh-action@v0.1.7
         with:
-          host: ${{ secrets.EC2_PUBLIC_IP }}
+          host: ${{ secrets.DOMAIN }}
           username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
@@ -52,12 +52,12 @@ jobs:
             POSTGRES_DATABASE=${{ secrets.POSTGRES_DATABASE }}
             POSTGRES_USER=${{ secrets.POSTGRES_USER }}
             POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
-            API_DOMAIN=${{ secrets.EC2_PUBLIC_IP }}
+            API_DOMAIN=api.${{ secrets.DOMAIN }}
             API_PORT=${{ secrets.API_PORT }}
             API_JWT_SECRET=${{ secrets.API_JWT_SECRET }}
             API_COOKIE_MAX_AGE=${{ secrets.API_COOKIE_MAX_AGE }}
             GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
-            CLIENT_DOMAIN=${{ secrets.EC2_PUBLIC_IP }}
+            CLIENT_DOMAIN=${{ secrets.DOMAIN }}
             CLIENT_PORT=${{ secrets.CLIENT_PORT }}
             EOF
 
@@ -67,7 +67,7 @@ jobs:
       - name: Copy docker-compose.yml
         uses: appleboy/scp-action@v0.1.4
         with:
-          host: ${{ secrets.EC2_PUBLIC_IP }}
+          host: ${{ secrets.DOMAIN }}
           username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
           source: "docker-compose.yml"
@@ -76,7 +76,7 @@ jobs:
       - name: Start Application
         uses: appleboy/ssh-action@v0.1.7
         with:
-          host: ${{ secrets.EC2_PUBLIC_IP }}
+          host: ${{ secrets.DOMAIN }}
           username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
@@ -90,6 +90,42 @@ jobs:
             docker-compose down --volumes --remove-orphans
             docker image prune -af
 
-            # Pull latest and
+            # Setup nginx
+            sudo tee /etc/nginx/sites-available/application-tracker.conf > /dev/null << 'EOF'
+            server {
+                listen 80;
+                server_name ${{ secrets.DOMAIN }};
+
+                location / {
+                    proxy_pass http://client:80;
+                    proxy_set_header Host $host;
+                    proxy_set_header X-Real-IP $remote_addr;
+                    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                    proxy_set_header X-Forwarded-Proto $scheme;
+                }
+            }
+
+            server {
+                listen 80;
+                server_name api.${{ secrets.DOMAIN }};
+
+                location / {
+                    proxy_pass http://api:5333;
+                    proxy_set_header Host $host;
+                    proxy_set_header X-Real-IP $remote_addr;
+                    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                    proxy_set_header X-Forwarded-Proto $scheme;
+                }
+            }
+            EOF
+
+            sudo ln -sf /etc/nginx/sites-available/application-tracker.conf /etc/nginx/sites-enabled/
+            sudo nginx -t
+            sudo systemctl reload nginx
+
+            # Obtain SSL certificates automatically
+            sudo certbot --nginx -d ${{ secrets.DOMAIN }} -d api.${{ secrets.DOMAIN }} --non-interactive --agree-tos --redirect --deploy-hook "systemctl reload nginx"
+
+            $ Pull latest containers and start
             docker-compose pull
             docker-compose up -d --force-recreate

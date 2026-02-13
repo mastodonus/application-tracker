@@ -14,7 +14,8 @@ export PATH=$PATH:/usr/local/bin
 sudo dnf update -y
 
 # Install Docker and Git
-sudo dnf install -y docker git
+sudo dnf install -y docker git nginx
+sudo dnf install -y certbot python3-certbot-nginx
 
 # Enable and start Docker
 sudo systemctl enable docker
@@ -38,3 +39,7 @@ sudo chown -R ec2-user:ec2-user /var/lib/postgresql/data
 
 # Persist mount across reboots
 echo "/dev/xvdf /var/lib/postgresql/data ext4 defaults,nofail 0 2" | sudo tee -a /etc/fstab
+
+# Start nginx
+sudo systemctl start nginx
+sudo systemctl enable nginx

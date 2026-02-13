@@ -113,7 +113,7 @@ resource "aws_instance" "app" {
   user_data = file("${path.module}/user_data.sh")
 
   root_block_device {
-    volume_size = 20
+    volume_size = 30
     volume_type = "gp3"
   }
 
@@ -136,4 +136,24 @@ resource "aws_volume_attachment" "postgres_attach" {
   device_name = "/dev/sdf"
   volume_id   = aws_ebs_volume.postgres_data.id
   instance_id = aws_instance.app.id
+}
+
+resource "aws_route53_zone" "app" {
+  name = "mastodonus.com"
+}
+
+resource "aws_route53_record" "client" {
+  zone_id = aws_route53_zone.app.id
+  name    = "application-tracker"
+  type    = "A"
+  ttl     = 60
+  records = [aws_instance.app.public_ip]
+}
+
+resource "aws_route53_record" "api" {
+  zone_id = aws_route53_zone.app.id
+  name    = "api.application-tracker"
+  type    = "A"
+  ttl     = 60
+  records = [aws_instance.app.public_ip]
 }

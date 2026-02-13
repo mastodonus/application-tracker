@@ -1,7 +1,10 @@
+version: "3.9"
+
 services:
   db:
     image: postgres:16
     container_name: job-hunt-db
+    restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -17,25 +20,36 @@ services:
     command: >
       -url=jdbc:postgresql://db:${POSTGRES_PORT}/${POSTGRES_DATABASE}
       -user=${POSTGRES_USER}
-      -password=${POSTGRES_PASSWORD}
-      migrate
+      -password=${POSTGRES_PASSWORD} migrate
     volumes:
       - ./postgres/migrations:/flyway/sql
-  
+
   api:
     image: ghcr.io/mastodonus/application-tracker-api:latest
-    ports:
-      - "${API_PORT}:5333"
+    container_name: api
+    restart: unless-stopped
     env_file:
       - .env
     depends_on:
       - db
+    expose:
+      - "5333"
+    networks:
+      - application-tracker-network
 
   client:
     image: ghcr.io/mastodonus/application-tracker-client:latest
-    ports:
-      - "${CLIENT_PORT}:80"
+    container_name: client
+    restart: unless-stopped
     env_file:
       - .env
     depends_on:
       - api
+    expose:
+      - "80"
+    networks:
+      - application-tracker-network
+
+networks:
+  application-tracker-network:
+    driver: bridge
