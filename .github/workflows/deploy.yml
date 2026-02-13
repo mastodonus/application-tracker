@@ -47,19 +47,19 @@ jobs:
 
             # Create .env variables
             cat > .env << EOF
-            POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}
-            POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}
-            POSTGRES_DATABASE=${{ secrets.POSTGRES_DATABASE }}
-            POSTGRES_USER=${{ secrets.POSTGRES_USER }}
-            POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
-            API_DOMAIN=api.${{ secrets.DOMAIN }}
-            API_PORT=${{ secrets.API_PORT }}
-            API_JWT_SECRET=${{ secrets.API_JWT_SECRET }}
-            API_COOKIE_MAX_AGE=${{ secrets.API_COOKIE_MAX_AGE }}
-            GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
-            CLIENT_DOMAIN=${{ secrets.DOMAIN }}
-            CLIENT_PORT=${{ secrets.CLIENT_PORT }}
-            EOF
+POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}
+POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}
+POSTGRES_DATABASE=${{ secrets.POSTGRES_DATABASE }}
+POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+API_DOMAIN=api.${{ secrets.DOMAIN }}
+API_PORT=${{ secrets.API_PORT }}
+API_JWT_SECRET=${{ secrets.API_JWT_SECRET }}
+API_COOKIE_MAX_AGE=${{ secrets.API_COOKIE_MAX_AGE }}
+GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+CLIENT_DOMAIN=${{ secrets.DOMAIN }}
+CLIENT_PORT=${{ secrets.CLIENT_PORT }}
+EOF
 
             chmod 600 .env
             chown ec2-user:ec2-user .env
