@@ -61,11 +61,19 @@ resource "aws_security_group" "ec2" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    description = "HTTPS"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   # Allow API
   ingress {
     description = "API"
-    from_port   = 5000
-    to_port     = 5000
+    from_port   = 5333
+    to_port     = 5333
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
