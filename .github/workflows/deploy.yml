@@ -99,13 +99,20 @@ jobs:
 
       - name: Start Application
         uses: appleboy/ssh-action@v0.1.7
+        env:
+          GHCR_PAT: ${{ secrets.GHCR_PAT }}
         with:
           host: ${{ secrets.EC2_PUBLIC_IP }}
           username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
+          envs: |
+            GHCR_PAT
           script: |
             set -e
             cd /home/ec2-user/application-tracker
+
+            # Login to GHCR
+            echo $GHCR_PAT | docker login ghcr.io -u mastodonus --password-stdin
 
             # Shut down any running containers and prune
             docker-compose down --volumes --remove-orphans
