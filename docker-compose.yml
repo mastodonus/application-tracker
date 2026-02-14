@@ -11,6 +11,8 @@ services:
       POSTGRES_DB: ${POSTGRES_DATABASE}
     volumes:
       - /var/lib/postgresql/data:/var/lib/postgresql/data
+    networks:
+      - application-tracker-network
 
   flyway:
     image: flyway/flyway:latest
@@ -23,6 +25,8 @@ services:
       -password=${POSTGRES_PASSWORD} migrate
     volumes:
       - ./postgres/migrations:/flyway/sql
+    networks:
+      - application-tracker-network
 
   api:
     image: ghcr.io/mastodonus/application-tracker-api:latest
