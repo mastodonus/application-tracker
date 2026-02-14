@@ -84,7 +84,7 @@ jobs:
           username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
           source: "postgres/migrations"
-          target: "/home/ec2-user/application-tracker/postgres"
+          target: "/home/ec2-user/application-tracker"
 
       - name: Start Application
         uses: appleboy/ssh-action@v0.1.7
