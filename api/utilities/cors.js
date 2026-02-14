@@ -4,12 +4,9 @@ import { variables } from './variables.js';
 const allowedOrigins = [
     `http://${variables.client.domain}:${variables.client.port}`,
     `https://${variables.client.domain}:${variables.client.port}`,
+    `http://${variables.client.domain}`,
+    `https://${variables.client.domain}`,
 ];
-
-if (variables.client.port === '80') {
-    allowedOrigins.push(`http://${variables.client.domain}`);
-    allowedOrigins.push(`https://${variables.client.domain}`);
-}
 
 const corsSettings = cors({
     origin: function (origin, callback) {
