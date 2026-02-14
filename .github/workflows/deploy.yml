@@ -76,6 +76,15 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           source: "docker-compose.yml"
           target: "/home/ec2-user/application-tracker"
+      
+      - name: Copy Postgres Migrations
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.DOMAIN }}
+          username: ec2-user
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "postgres/migrations"
+          target: "/home/ec2-user/application-tracker/postgres"
 
       - name: Start Application
         uses: appleboy/ssh-action@v0.1.7
