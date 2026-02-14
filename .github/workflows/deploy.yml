@@ -27,7 +27,11 @@ jobs:
 
       - name: Build & push Client
         run: |
-          docker build -t ghcr.io/mastodonus/application-tracker-client:latest ./client
+          docker build \
+          --build-arg REACT_APP_GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
+          --build-arg REACT_APP_API_URL=https://api.${{ secrets.DOMAIN }} \
+          -t ghcr.io/mastodonus/application-tracker-client:latest \
+          ./client
           docker push ghcr.io/mastodonus/application-tracker-client:latest
 
       - name: Initialize Environment (SSH)
