@@ -232,7 +232,6 @@ function Application(){
                                     label="Applied"
                                     value={draft.applied ?? null}
                                     onChange={(date) => {
-                                        console.log(date);
                                         updateField('applied', date)}}                   
                                     format="DDD"
                                     slotProps={{
