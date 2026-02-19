@@ -1,6 +1,4 @@
 import { useEffect, useState } from 'react'
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
 import Drawer from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
@@ -9,17 +7,14 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import ListItem  from '@mui/material/ListItem';
 import IconButton from '@mui/material/IconButton';
-import Avatar from '@mui/material/Avatar';
 import PlusIcon from '@mui/icons-material/Add';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import FilterAltOffIcon from '@mui/icons-material/FilterAltOff';
-import LogoutIcon from '@mui/icons-material/Logout';
 import CardApplication from '../components/CardApplication';
 import ModalApplicationEdit from '../components/ModalApplicationEdit';
 import ModalDocumentsEdit from '../components/ModalDocumentsEdit';
-import Logo from "../components/Logo";
+import ToolBar from "../components/ToolBar";
 import API_BASE from '../utilities/ApiUtilities';
-import { useAuth } from "../utilities/AuthProvider";
 import { useNavigate } from "react-router-dom";
 
 function Dashboard() {
@@ -30,7 +25,6 @@ function Dashboard() {
     const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
     const [applyFilters, setApplyFilters] = useState(false);
     const [filterCompany, setFilterCompany] = useState('');
-    const { user, logout } = useAuth();
     const navigate = useNavigate();
 
     const fetchApplications = () => {
@@ -49,16 +43,6 @@ function Dashboard() {
         fetchApplications();
     }, [applyFilters])
 
-    function editApplication(application){
-        setSelectedApplication(application);
-        setIsEditModalOpen(true);
-    }
-
-    function addApplication(){
-        setSelectedApplication(null);
-        setIsEditModalOpen(true);
-    }
-
     function editDocuments(application){
         setSelectedApplication(application);
         setIsEditDocumentsModalOpen(true)
@@ -68,12 +52,6 @@ function Dashboard() {
         setFilterCompany('');
         setApplyFilters(true);
     }
-
-    function handleLogout() {
-        logout();
-        navigate("/login", { replace: true });
-    }
-
     async function deleteApplication(application){
         const confirmed = window.confirm(
             `Are you sure you want to delete ${application.company ?? 'this application'}?`
@@ -92,55 +70,38 @@ function Dashboard() {
 
     return (
         <>
-            <AppBar position="static">
-                <Toolbar>
-                    {/* <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                        Job Hunt
-                    </Typography> */}
-                    <Logo sx={{fontSize: '2rem', flexGrow: 1, filter: 'brightness(2)'}}/>
-                    <IconButton
-                        size="large"
-                        edge="start"
-                        color="inherit"
-                        aria-label="menu"
-                        sx={{ mr: 2 }}
-                        onClick={() => addApplication()}
-                    >
-                        <PlusIcon />
-                    </IconButton>
-                    <IconButton
-                        size="large"
-                        edge="start"
-                        color="inherit"
-                        aria-label="menu"
-                        sx={{ mr: 2 }}
-                        onClick={() => setIsFilterDrawerOpen(true)}
-                    >
-                        <FilterAltIcon />
-                    </IconButton>
-                    <IconButton
-                        size="large"
-                        edge="start"
-                        color="inherit"
-                        aria-label="menu"
-                        sx={{ mr: 2 }}
-                        onClick={() => clearFilters()}
-                    >
-                        <FilterAltOffIcon />
-                    </IconButton>
-                    <IconButton
-                        size="large"
-                        edge="start"
-                        color="inherit"
-                        aria-label="menu"
-                        sx={{ mr: 2 }}
-                        onClick={() => handleLogout()}
-                    >
-                        <LogoutIcon />
-                    </IconButton>
-                    <Avatar src={user?.avatar} imgProps={{ referrerPolicy: 'no-referrer' }}/>
-                </Toolbar>
-            </AppBar>
+            <ToolBar>
+                <IconButton
+                    size="large"
+                    edge="start"
+                    color="inherit"
+                    aria-label="menu"
+                    sx={{ mr: 2 }}
+                    onClick={() => navigate('/applications/new')}
+                >
+                    <PlusIcon />
+                </IconButton>
+                <IconButton
+                    size="large"
+                    edge="start"
+                    color="inherit"
+                    aria-label="menu"
+                    sx={{ mr: 2 }}
+                    onClick={() => setIsFilterDrawerOpen(true)}
+                >
+                    <FilterAltIcon />
+                </IconButton>
+                <IconButton
+                    size="large"
+                    edge="start"
+                    color="inherit"
+                    aria-label="menu"
+                    sx={{ mr: 2 }}
+                    onClick={() => clearFilters()}
+                >
+                    <FilterAltOffIcon />
+                </IconButton>
+            </ToolBar>
             <Drawer open={isFilterDrawerOpen} onClose={() => setIsFilterDrawerOpen(false)}>
                 <Box sx={{ width: '20rem' }} role="presentation">
                     <List>
@@ -175,7 +136,7 @@ function Dashboard() {
                         <CardApplication 
                             key={application.applicationId} 
                             application={application}
-                            onEdit={() => editApplication(application)}
+                            onEdit={() => navigate(`/applications/${application.applicationId}`)}
                             onDelete={() => deleteApplication(application)}
                             onEditDocuments={() => editDocuments(application)} />
                     ))

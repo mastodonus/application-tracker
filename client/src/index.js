@@ -10,6 +10,7 @@ import reportWebVitals from './reportWebVitals';
 import { AuthProvider } from './utilities/AuthProvider';
 import ProtectedRoute from './utilities/ProtectedRoute';
 import Dashboard from './views/Dashboard';
+import Application from './views/Application';
 import Login from './views/Login';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -24,6 +25,8 @@ root.render(
                         <Routes>
                             <Route path="/login" element={<Login />} />
                             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                            <Route path="/applications/new" element={<ProtectedRoute><Application /></ProtectedRoute>} />
+                            <Route path="/applications/:id" element={<ProtectedRoute><Application /></ProtectedRoute>} />
                             <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                             <Route path="*" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                         </Routes>

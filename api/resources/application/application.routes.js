@@ -1,8 +1,23 @@
 import express from 'express';
-import { getApplications, updateApplication, createApplication, deleteApplication } from './application.repository.js'
+import { getApplication, getApplications, updateApplication, createApplication, deleteApplication } from './application.repository.js'
 import { requireAuth } from '../../middleware/requireAuth.js';
 
 const router = express.Router();
+
+// GET ONE
+router.get('/:id', requireAuth, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const getApplicationResult = await getApplication(req.user.userId, id);
+
+        return getApplicationResult.success
+            ? res.json(getApplicationResult.data)
+            : res.sendStatus(getApplicationResult.status);
+    } catch (err) {
+        console.error(err);
+        res.sendStatus(500);
+    }
+});
 
 // GET MANY
 router.get('/', requireAuth, async (req, res) => {

@@ -19,6 +19,7 @@ terraform.tfstate.backup
 
 # misc
 .vscode
+*.code-workspace
 .DS_Store
 .env
 .env.development
