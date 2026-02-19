@@ -27,7 +27,7 @@ export async function deleteApplication(application){
 
 export async function saveApplication(application){
     if(application.applicationId){
-        await fetch(`${API_BASE}/api/applications/${application.applicationId}`, {
+        var response = await fetch(`${API_BASE}/api/applications/${application.applicationId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -35,8 +35,10 @@ export async function saveApplication(application){
             body: JSON.stringify(application),
             credentials: 'include'
         });
+
+        return response.json();
     }else{
-        await fetch(`${API_BASE}/api/applications`, {
+        var response = await fetch(`${API_BASE}/api/applications`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -44,5 +46,7 @@ export async function saveApplication(application){
             body: JSON.stringify(application),
             credentials: 'include'
         });
+
+        return response.json();
     }
 }

@@ -11,17 +11,12 @@ import PlusIcon from '@mui/icons-material/Add';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import FilterAltOffIcon from '@mui/icons-material/FilterAltOff';
 import CardApplication from '../components/CardApplication';
-import ModalApplicationEdit from '../components/ModalApplicationEdit';
-import ModalDocumentsEdit from '../components/ModalDocumentsEdit';
 import ToolBar from "../components/ToolBar";
 import API_BASE from '../utilities/ApiUtilities';
 import { useNavigate } from "react-router-dom";
 
 function Dashboard() {
     const [applications, setApplications] = useState([{}])
-    const [selectedApplication, setSelectedApplication] = useState(null);
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [isEditDocumentsModalOpen, setIsEditDocumentsModalOpen] = useState(false);
     const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
     const [applyFilters, setApplyFilters] = useState(false);
     const [filterCompany, setFilterCompany] = useState('');
@@ -42,11 +37,6 @@ function Dashboard() {
     useEffect(() => {
         fetchApplications();
     }, [applyFilters])
-
-    function editDocuments(application){
-        setSelectedApplication(application);
-        setIsEditDocumentsModalOpen(true)
-    }
 
     function clearFilters(){
         setFilterCompany('');
@@ -137,23 +127,10 @@ function Dashboard() {
                             key={application.applicationId} 
                             application={application}
                             onEdit={() => navigate(`/applications/${application.applicationId}`)}
-                            onDelete={() => deleteApplication(application)}
-                            onEditDocuments={() => editDocuments(application)} />
+                            onDelete={() => deleteApplication(application)} />
                     ))
                 )
             }
-                <ModalApplicationEdit
-                    open={isEditModalOpen}
-                    onClose={() => setIsEditModalOpen(false)}
-                    onSave={() => fetchApplications()}
-                    application={selectedApplication}
-                />
-                <ModalDocumentsEdit
-                    open={isEditDocumentsModalOpen}
-                    onClose={() => setIsEditDocumentsModalOpen(false)}
-                    onSave={() => fetchApplications()}
-                    application={selectedApplication}
-                />
             </div>
         </>
     )

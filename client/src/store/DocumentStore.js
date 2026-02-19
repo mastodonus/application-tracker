@@ -1,17 +1,18 @@
 import API_BASE from '../utilities/ApiUtilities';
 
 export async function getDocumentHeaders(applicationId){
-    const result = await fetch(`${API_BASE}/api/documents?applicationId=${application.applicationId}`, {
+    const result = await fetch(`${API_BASE}/api/documents?applicationId=${applicationId}`, {
         credentials: 'include'
     });
 
     return (result.json() || []);
 }
 
-export async function uploadDocuments(){
+export async function uploadDocuments({documents, applicationId}){
+    console.log(`uploadding ${documents.length} documents to ${applicationId}`);
     await Promise.all(documents.map(async (document) => {
         const formData = new FormData();
-        formData.append('applicationId', application.applicationId);
+        formData.append('applicationId', applicationId);
         formData.append('document', document);
 
         await fetch(`${API_BASE}/api/documents`, {
@@ -22,8 +23,8 @@ export async function uploadDocuments(){
     }));
 }
 
-export async function deleteDocument(){
-    await fetch(`${API_BASE}/api/documents/${document.documentId}`, {
+export async function deleteDocument(documentId){
+    await fetch(`${API_BASE}/api/documents/${documentId}`, {
         method: 'DELETE',
         credentials: 'include'
     });

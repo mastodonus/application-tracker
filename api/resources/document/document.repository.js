@@ -4,7 +4,7 @@ import { getApplication } from '../application/application.repository.js'
 
 export async function getDocumentHeader(userId, documentId) {
     const { rows } = await postgres.query(
-        'select * from job_hunt.s_document_headers($1,$2)',
+        'select * from job_hunt.s_document_header($1)',
         [documentId]
     )
 
@@ -16,7 +16,7 @@ export async function getDocumentHeader(userId, documentId) {
     }
 
     const documentHeader = mapDocumentHeader(rows[0]);
-    if (documentHeader.userId !== userId) {
+    if (rows[0].out_user_id !== userId) {
         return {
             success: false,
             status: 403
@@ -90,6 +90,8 @@ export async function createDocument(userId, document) {
 }
 
 export async function deleteDocument(userId, documentId) {
+        console.log(`userId ${userId}`);
+        console.log(`documentId ${documentId}`);
     const existingResult = await getDocumentHeader(userId, documentId);
     if (!existingResult.success) {
         return existingResult;

@@ -8,11 +8,20 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Card from '@mui/material/Card';
 import MenuItem from '@mui/material/MenuItem';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import SaveIcon from '@mui/icons-material/Save';
+import PlusIcon from '@mui/icons-material/AddOutlined';
+import FileDownloadIcon from '@mui/icons-material/FileDownloadOutlined';
+import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import { getApplication, saveApplication } from '../store/ApplicationStore';
+import { getDocumentHeaders, uploadDocuments, deleteDocument, downloadDocument  } from '../store/DocumentStore';
 import ToolBar from "../components/ToolBar";
 
 
@@ -20,17 +29,36 @@ function Application(){
     const { id } = useParams();
     const isEditMode = id;
     const [draft, setDraft] = useState({});
+    const [documents, setDocuments] = useState([]);
+    const [draftDocuments, setDraftDocuments] = useState([]);
+    const [interviews, setInterviews] = useState([]);
     const navigate = useNavigate();
+
+    async function refreshDocuments(){
+        if(isEditMode){
+            await getDocumentHeaders(id).then(headers =>
+                setDocuments(headers)
+            );
+        }
+    }
 
     useEffect(() => {
         if (isEditMode) {
-            getApplication(id)
-            .then(application => setDraft({
-                ...application,
-                applied: application.applied ? DateTime.fromISO(application.applied) : null
-            }));
+            getApplication(id).then(application => 
+                setDraft({
+                    ...application,
+                    applied: application.applied ? DateTime.fromISO(application.applied) : null
+                }
+            ));
+
+            refreshDocuments();
+
+            setInterviews([]);
         }else{
             setDraft({});
+            setDocuments([]);
+            setDraftDocuments([]);
+            setInterviews([]);
         }
     }, []);
 
@@ -39,6 +67,66 @@ function Application(){
             ...prev,
             [field]: value
         }));
+    }
+
+    async function saveHandler(){
+        const createdApplicationId = await saveApplication(draft);
+
+        if(!isEditMode && draftDocuments.length){
+            await uploadDocuments({
+                documents: draftDocuments.map(d => d.file),
+                applicationId: createdApplicationId
+            });
+        }
+
+        navigate('/dashboard');
+    }
+
+    async function deleteDocumentHandler(documentId){
+        const document = documents.find(d => d.documentId === documentId)
+        
+        const confirmed = window.confirm(
+            `Are you sure you want to delete ${document.filename}?`
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        await deleteDocument(document.documentId);
+        await refreshDocuments();
+    }
+
+    async function deleteDraftDocumentHandler(draftDocumentId){
+        const draft = draftDocuments.find(d => d.draftId === draftDocumentId);
+        
+        const confirmed = window.confirm(
+            `Are you sure you want to delete ${draft.file.name}?`
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        setDraftDocuments(draftDocuments.filter(d => d.draftId !== draft.draftId));
+    }
+
+    async function UploadFilesHandler(files){
+        if(isEditMode){
+            await uploadDocuments({
+                documents: files,
+                applicationId: draft.applicationId
+            });
+
+            await refreshDocuments();
+        }else{
+            setDraftDocuments([
+                ...draftDocuments,
+                ...files.map(f => ({
+                    draftId: crypto.randomUUID(),
+                    file: f
+            }))]);
+        }
     }
 
     return (
@@ -142,13 +230,18 @@ function Application(){
                             <LocalizationProvider dateAdapter={AdapterLuxon}>
                                 <DatePicker
                                     label="Applied"
-                                    value={draft.applied}
-                                    onChange={date => updateField('applied', date)}
-                                    renderInput={(params) => <TextField {...params} fullWidth margin="normal" />}
-                                    sx={{
-                                        marginTop: '0.5rem',
+                                    value={draft.applied ?? null}
+                                    onChange={(date) => {
+                                        console.log(date);
+                                        updateField('applied', date)}}                   
+                                    format="DDD"
+                                    slotProps={{
+                                        textField: {
+                                        fullWidth: true,
+                                        margin: "normal"
+                                        }
                                     }}
-                                />
+                                    />
                             </LocalizationProvider>
 
                             <TextField
@@ -168,6 +261,60 @@ function Application(){
                     <Card sx={{gridRow: '1 / span 2', gridColumn: '4 / span 2'}}>
                         <Box sx={{m: '1rem'}}>
                             <h3>Documents</h3>
+                            <List sx={{pt: '1rem', ml: '1rem'}}>
+                                {
+                                    documents.map((document, i) => (
+                                        <ListItem key={document.documentId} disablePadding>
+                                            <ListItemText primary={document.filename}/>
+                                            <ListItemButton
+                                                onClick={() => downloadDocument(document.documentId)}
+                                                sx={{maxWidth: '3rem', display: 'flex', justifyContent: 'center'}}>
+                                                <ListItemIcon sx={{minWidth: 0}}>
+                                                    <FileDownloadIcon />
+                                                </ListItemIcon>
+                                            </ListItemButton>
+                                            <ListItemButton
+                                                onClick={async () => await deleteDocumentHandler(document.documentId)}
+                                                sx={{maxWidth: '3rem', display: 'flex', justifyContent: 'center'}}>
+                                                <ListItemIcon sx={{minWidth: 0}}>
+                                                    <DeleteIcon />
+                                                </ListItemIcon>
+                                            </ListItemButton>
+                                        </ListItem>
+                                    ))
+                                }
+                                {
+                                    draftDocuments.map((draftDocument, i) => (
+                                        <ListItem key={draftDocument.draftId} disablePadding>
+                                            <ListItemText primary={draftDocument.file.name}/>
+                                            <ListItemButton
+                                                onClick={async () => await deleteDraftDocumentHandler(draftDocument.draftId)}
+                                                sx={{maxWidth: '3rem', display: 'flex', justifyContent: 'center'}}>
+                                                <ListItemIcon sx={{minWidth: 0}}>
+                                                    <DeleteIcon />
+                                                </ListItemIcon>
+                                            </ListItemButton>
+                                        </ListItem>
+                                    ))
+                                }
+                                <ListItem disablePadding>
+                                    <ListItemButton 
+                                        component="label"
+                                        variant="contained"
+                                        sx={{pl: 0}}>
+                                        <ListItemIcon sx={{minWidth: 0, marginRight: '0.5rem'}}>
+                                            <PlusIcon />
+                                        </ListItemIcon>
+                                        Upload Documents
+                                        <input
+                                            type="file"
+                                            hidden
+                                            multiple
+                                            onChange={(e)=> UploadFilesHandler(Array.from(e.target.files))}
+                                        />
+                                    </ListItemButton>
+                                </ListItem>
+                            </List>
                         </Box>
                     </Card>
                     <Card sx={{gridRow: '3 / span 3', gridColumn: '4 / span 2'}}>
@@ -195,10 +342,7 @@ function Application(){
                     </IconButton>
                     <IconButton
                         size="small"
-                        onClick={async () => {
-                            await saveApplication(draft);
-                            navigate('/dashboard');
-                        }}
+                        onClick={async () => await saveHandler()}
                         color='primary'
                         sx={{border: '1px solid', borderRadius: '12px', p: '0.75rem' }}
                     >
