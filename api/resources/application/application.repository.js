@@ -16,7 +16,6 @@ export async function getApplication(userId, applicationId) {
 
     const application = mapApplication(rows[0]);
     if (application.userId !== userId) {
-        console.log(`>> ${application.userId} vs ${userId}`);
         return {
             success: false,
             status: 403

@@ -16,7 +16,7 @@ export async function getInterview(userId, interviewId) {
     }
 
     const interview = mapInterview(rows[0]);
-    if (interview.userId !== userId) {
+    if (rows[0].out_user_id !== userId) {
         return {
             success: false,
             status: 403
@@ -38,11 +38,14 @@ export async function getInterviews(userId, applicationId) {
         ]
     )
 
-    return rows.map(mapInterview);
+    return {
+        success: true,
+        data: rows.map(mapInterview)
+    };
 }
 
 export async function createInterview(userId, interview) {
-    const existingApplicationResult = await getApplication(userId, document.applicationId);
+    const existingApplicationResult = await getApplication(userId, interview.applicationId);
     if (!existingApplicationResult.success) {
         existingApplicationResult.status = existingApplicationResult.status != 404
             ? existingApplicationResult.status
@@ -73,10 +76,9 @@ export async function updateInterview(userId, interviewId, interview) {
     }
 
     const { rows } = await postgres.query(
-        `select * from job_hunt.u_interview($1,$2,$3,$4)`,
+        `select * from job_hunt.u_interview($1,$2,$3)`,
         [
             interviewId,
-            interview.applicationId,
             interview.interviewDate,
             interview.details
         ]

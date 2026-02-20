@@ -1,8 +1,23 @@
 import express from 'express';
-import { getInterviews, updateInterview, createInterview, deleteInterview } from './interview.repository.js'
+import { getInterview, getInterviews, updateInterview, createInterview, deleteInterview } from './interview.repository.js'
 import { requireAuth } from '../../middleware/requireAuth.js';
 
 const router = express.Router();
+
+// GET ONE
+router.get('/:id', requireAuth, async (req, res) => {
+    try {
+        const { id } = req.query;
+        const getInterviewResult = await getInterview(req.user.userId, id);
+        
+        return getInterviewResult.success
+            ? res.json(getInterviewResult.data)
+            : res.sendStatus(getInterviewResult.status);
+    } catch (err) {
+        console.error(err);
+        res.sendStatus(500);
+    }
+});
 
 // GET MANY
 router.get('/', requireAuth, async (req, res) => {
@@ -15,7 +30,7 @@ router.get('/', requireAuth, async (req, res) => {
             : res.sendStatus(getInterviewsResult.status);
     } catch (err) {
         console.error(err);
-        res.sendStatus(500);
+        res.status(500).json({ err });
     }
 });
 

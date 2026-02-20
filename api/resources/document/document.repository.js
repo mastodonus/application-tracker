@@ -90,8 +90,6 @@ export async function createDocument(userId, document) {
 }
 
 export async function deleteDocument(userId, documentId) {
-        console.log(`userId ${userId}`);
-        console.log(`documentId ${documentId}`);
     const existingResult = await getDocumentHeader(userId, documentId);
     if (!existingResult.success) {
         return existingResult;

@@ -9,7 +9,6 @@ export async function getDocumentHeaders(applicationId){
 }
 
 export async function uploadDocuments({documents, applicationId}){
-    console.log(`uploadding ${documents.length} documents to ${applicationId}`);
     await Promise.all(documents.map(async (document) => {
         const formData = new FormData();
         formData.append('applicationId', applicationId);

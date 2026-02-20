@@ -18,7 +18,7 @@ export default function Login() {
   return (
     <>
         <Box sx={{position: 'absolute', top: '45%', left: '50%', transform: 'translate(-50%, -50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem'}}>
-            <Logo  sx={{fontSize: '4rem', filter: 'brightness(1.5)' }}/>
+            <Logo sx={{fontSize: '4rem', filter: 'brightness(1.5)' }} logoSize="10rem"/>
             <GoogleLogin
                 onSuccess={async (credentialResponse) => {
                     const { credential } = credentialResponse;

@@ -19,7 +19,7 @@ function ToolBar({children}){
     return (
         <AppBar position="static">
             <Toolbar>
-                <Logo sx={{fontSize: '2rem', flexGrow: 1, filter: 'brightness(2)'}}/>
+                <Logo sx={{fontSize: '2rem', flexGrow: 1, filter: 'brightness(2)'}} logoSize="4rem" />
                 {children}
                 <IconButton
                     size="large"

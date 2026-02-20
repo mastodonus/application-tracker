@@ -20,25 +20,44 @@ import SaveIcon from '@mui/icons-material/Save';
 import PlusIcon from '@mui/icons-material/AddOutlined';
 import FileDownloadIcon from '@mui/icons-material/FileDownloadOutlined';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
+import EditIcon from '@mui/icons-material/EditOutlined';
 import { getApplication, saveApplication } from '../store/ApplicationStore';
 import { getDocumentHeaders, uploadDocuments, deleteDocument, downloadDocument  } from '../store/DocumentStore';
+import { getInterviews, deleteInterview, saveInterview } from '../store/InterviewStore';
 import ToolBar from "../components/ToolBar";
+import ModalInterview from '../components/ModalInterview';
 
 
 function Application(){
-    const { id } = useParams();
-    const isEditMode = id;
     const [draft, setDraft] = useState({});
     const [documents, setDocuments] = useState([]);
     const [draftDocuments, setDraftDocuments] = useState([]);
     const [interviews, setInterviews] = useState([]);
+    const [draftInterviews, setDraftInterviews] = useState([]);
+    const [selectedInterview, setSelectedInterview] = useState({});
+    const [isInterviewModalOpen, setIsInterviewModalOpen] = useState(false);
+
+
+    const { id } = useParams();
+    const isEditMode = id;
     const navigate = useNavigate();
 
     async function refreshDocuments(){
         if(isEditMode){
-            await getDocumentHeaders(id).then(headers =>
-                setDocuments(headers)
+            await getDocumentHeaders(id).then(response =>
+                setDocuments(response)
             );
+        }
+    }
+
+    async function refreshInterviews(){
+        if(isEditMode){
+            await getInterviews(id).then(response => {
+                setInterviews(response.map(i => ({
+                    ...i,
+                    interviewDate: i.interviewDate ? DateTime.fromISO(i.interviewDate) : i.interviewDate
+                })))
+            });
         }
     }
 
@@ -52,13 +71,13 @@ function Application(){
             ));
 
             refreshDocuments();
-
-            setInterviews([]);
+            refreshInterviews();
         }else{
             setDraft({});
             setDocuments([]);
             setDraftDocuments([]);
             setInterviews([]);
+            setDraftInterviews([]);
         }
     }, []);
 
@@ -72,11 +91,20 @@ function Application(){
     async function saveHandler(){
         const createdApplicationId = await saveApplication(draft);
 
-        if(!isEditMode && draftDocuments.length){
-            await uploadDocuments({
-                documents: draftDocuments.map(d => d.file),
-                applicationId: createdApplicationId
-            });
+        if(!isEditMode){
+            if(draftDocuments.length){
+                await uploadDocuments({
+                    documents: draftDocuments.map(d => d.file),
+                    applicationId: createdApplicationId
+                });
+            }
+            if(draftInterviews.length){
+                await Promise.all(draftInterviews.map(interview => 
+                    saveInterview({
+                        ...interview,
+                        applicationId: createdApplicationId
+                    })));
+            }
         }
 
         navigate('/dashboard');
@@ -111,7 +139,7 @@ function Application(){
         setDraftDocuments(draftDocuments.filter(d => d.draftId !== draft.draftId));
     }
 
-    async function UploadFilesHandler(files){
+    async function uploadFilesHandler(files){
         if(isEditMode){
             await uploadDocuments({
                 documents: files,
@@ -127,6 +155,64 @@ function Application(){
                     file: f
             }))]);
         }
+    }
+
+    async function deleteDraftDocumentHandler(draftDocumentId){
+        const draft = draftDocuments.find(d => d.draftId === draftDocumentId);
+        
+        const confirmed = window.confirm(
+            `Are you sure you want to delete ${draft.file.name}?`
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        setDraftDocuments(draftDocuments.filter(d => d.draftId !== draft.draftId));
+    }
+
+    async function saveInterviewHandler(interview){
+        interview.applicationId = id;
+        interview.interviewDate = interview.interviewDate 
+            ? DateTime.fromISO(interview.interviewDate)
+            : interview.interviewDate;
+        if(isEditMode){
+            await saveInterview(interview);
+            refreshInterviews();
+        }else{
+            setDraftInterviews([
+                ...draftInterviews.filter(i => i.draftId !== interview.draftId),
+                {
+                    draftId: crypto.randomUUID(),
+                    ...interview
+                }
+            ])
+        }
+
+        setIsInterviewModalOpen(false);
+    }
+
+    async function deleteInterviewHandler(interview){
+        const confirmed = window.confirm(
+            `Are you sure you want to delete the interview on ${interview.interviewDate}?`
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+
+        if(interview.interviewId){
+            await deleteInterview(interview.interviewId);
+            refreshInterviews();
+        }else{
+            setDraftInterviews(draftInterviews.filter(i => i.draftId !== interview.draftId));
+        }
+    }
+
+    async function editInterviewHandler(interview){
+        setSelectedInterview(interview);
+        setIsInterviewModalOpen(true);
     }
 
     return (
@@ -309,7 +395,7 @@ function Application(){
                                             type="file"
                                             hidden
                                             multiple
-                                            onChange={(e)=> UploadFilesHandler(Array.from(e.target.files))}
+                                            onChange={(e)=> uploadFilesHandler(Array.from(e.target.files))}
                                         />
                                     </ListItemButton>
                                 </ListItem>
@@ -318,7 +404,42 @@ function Application(){
                     </Card>
                     <Card sx={{gridRow: '3 / span 3', gridColumn: '4 / span 2'}}>
                         <Box sx={{m: '1rem'}}>
-                            <h3>Interviews</h3>
+                            <h3>Interviews</h3>                            
+                            {
+                                interviews.concat(draftInterviews).map((interview, i) => (
+                                    <ListItem key={interview.interviewId} disablePadding>
+                                        <ListItemText primary={interview.interviewDate.toLocaleString(DateTime.DATETIME_FULL)}/>
+                                        <ListItemButton
+                                            onClick={() => editInterviewHandler(interview)}
+                                            sx={{maxWidth: '3rem', display: 'flex', justifyContent: 'center'}}>
+                                            <ListItemIcon sx={{minWidth: 0}}>
+                                                <EditIcon />
+                                            </ListItemIcon>
+                                        </ListItemButton>
+                                        <ListItemButton
+                                            onClick={async () => await deleteInterviewHandler(interview)}
+                                            sx={{maxWidth: '3rem', display: 'flex', justifyContent: 'center'}}>
+                                            <ListItemIcon sx={{minWidth: 0}}>
+                                                <DeleteIcon />
+                                            </ListItemIcon>
+                                        </ListItemButton>
+                                    </ListItem>
+                                ))
+                            }
+                            <List sx={{pt: '1rem', ml: '1rem'}}>
+                                <ListItem disablePadding>
+                                    <ListItemButton 
+                                        component="label"
+                                        variant="contained"
+                                        sx={{pl: 0}}
+                                        onClick={() => setIsInterviewModalOpen(true)}>
+                                        <ListItemIcon sx={{minWidth: 0, marginRight: '0.5rem'}}>
+                                            <PlusIcon />
+                                        </ListItemIcon>
+                                        Add Interview
+                                    </ListItemButton>
+                                </ListItem>
+                            </List>
                         </Box>
                     </Card>
                 </Box>
@@ -350,6 +471,13 @@ function Application(){
                     </IconButton>
                 </Box>
             </Container>
+            <ModalInterview 
+                interview={selectedInterview}
+                isOpen={isInterviewModalOpen} 
+                handleClose={() => {
+                    setIsInterviewModalOpen(false)
+                    setSelectedInterview({})}}
+                handleSave={saveInterviewHandler}/>
         </>
     );
 }
